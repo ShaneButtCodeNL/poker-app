@@ -1,0 +1,51 @@
+/**
+ * Will play a game of poker against NPCs with a set of rules
+ */
+
+import { Header } from "./components/Header";
+import DetailSelect from "./components/DetailSelect";
+import GameArea from "./components/GameArea";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import "./App.css";
+import { useState } from "react";
+
+function App() {
+  let [startMoney, setStartMoney] = useState(5000);
+  let [minBet, setMinBet] = useState(100);
+  let [numOfPlayers, setNumOfPlayers] = useState(2);
+  return (
+    <div className="App">
+      <Header />
+      <Router>
+        <Switch>
+          <Route path="/poker">
+            <GameArea
+              startMoney={startMoney}
+              minBet={minBet}
+              numOfPlayers={numOfPlayers}
+            />
+          </Route>
+          <Route path="/" exact>
+            <DetailSelect
+              setStartMoney={setStartMoney}
+              setNumOfPlayers={setNumOfPlayers}
+              setMinBet={setMinBet}
+              test={() =>
+                console.log(
+                  "Start Money:",
+                  startMoney,
+                  "MinBet:",
+                  minBet,
+                  "NumOfPlayers",
+                  numOfPlayers
+                )
+              }
+            />
+          </Route>
+        </Switch>
+      </Router>
+    </div>
+  );
+}
+
+export default App;
