@@ -1,13 +1,15 @@
-import react from "react";
+import ModeSelector from "./ModeSelector";
 
-function Header() {
+function Header(props: any) {
   return (
     <header>
       <div>
-        <span>Let's Play Poker</span>
+        <span id="title">Let's Play Poker</span>
         <br />
       </div>
-      <hr />
+      <div>
+        <ModeSelector mode={props.mode} setMode={props.setMode} />
+      </div>
     </header>
   );
 }

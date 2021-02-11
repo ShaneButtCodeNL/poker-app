@@ -10,13 +10,14 @@ function DetailSelect(props: any) {
   let minBetRef: any = React.createRef();
 
   return (
-    <div>
-      <form>
-        <div>
+    <div id="detailSelect">
+      <div id="detailsInputBox">
+        <div className="detailInput">
           <label>Select number of players:</label>
           <select
             id="numberOfPlayers"
             ref={numberOfPlayersRef}
+            defaultValue={props.numOfPlayers}
             onChange={() =>
               props.setNumOfPlayers(+numberOfPlayersRef.current.value)
             }
@@ -25,8 +26,9 @@ function DetailSelect(props: any) {
             <option value="3">3</option>
             <option value="4">4</option>
           </select>
-          <br />
-          <label>Amount of money to start with:</label>
+        </div>
+        <div className="detailInput">
+          <label>Amount of money to start with:&nbsp;&nbsp;</label>
           <input
             id="startMoney"
             ref={startMoneyRef}
@@ -36,9 +38,10 @@ function DetailSelect(props: any) {
             type="number"
             max="1000000"
             min="5000"
-            defaultValue="5000"
+            defaultValue={+props.startMoney}
           ></input>
-          <br />
+        </div>
+        <div className="detailInput">
           <label>Set Minimum Bet</label>
           <input
             id="minBet"
@@ -49,24 +52,24 @@ function DetailSelect(props: any) {
             type="number"
             min="100"
             max="100000"
-            defaultValue="100"
+            defaultValue={+props.minBet}
           ></input>
         </div>
-        <Link to="/poker">
-          <label
-            id="startGame"
-            onClick={() => {
-              props.test();
-            }}
-          >
-            Start
-            <br />
-            The
-            <br />
-            Game
-          </label>
-        </Link>
-      </form>
+      </div>
+      <Link to="/poker">
+        <label
+          id="startGame"
+          onClick={() => {
+            props.test();
+          }}
+        >
+          Start
+          <br />
+          The
+          <br />
+          Game
+        </label>
+      </Link>
     </div>
   );
 }
