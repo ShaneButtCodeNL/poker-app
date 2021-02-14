@@ -7,6 +7,12 @@
   --light-button-bg: rgb(104, 103, 103);
   --dark-button-bg: var(--dark-background);
   --dark-button-text: rgb(255, 208, 0);
+  --light-link-bg: rgb(202, 7, 0);
+  --light-link-bg-hover: rgb(233, 9, 1);
+  --light-link-color: rgb(255, 209, 4);
+  --dark-link-bg: rgb(63, 9, 0);
+  --dark-link-bg-hover: rgb(102, 15, 0);
+  --dark-link-color: rgb(216, 176, 0);
 }
 
 body {
@@ -28,7 +34,8 @@ header {
   flex-direction: column;
   align-items: center;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
 }
 
 #title {
@@ -61,6 +68,41 @@ header {
 .darkModeBtn {
   background-color: var(--dark-button-bg);
   color: var(--dark-button-text);
+  white-space: pre;
+}
+
+#startGameLink {
+  line-height: 1em;
+  text-align: center;
+  padding: 0.8em;
+  margin: 1em;
+  margin-left: 5em;
+  margin-right: 5em;
+}
+
+.lightLink {
+  background-color: var(--light-link-bg);
+}
+
+.lightLink:any-link {
+  color: var(--light-link-color);
+  text-decoration: none;
+}
+
+.lightLink:hover {
+  background-color: var(--light-link-bg-hover);
+}
+
+.darkLink {
+  background-color: var(--dark-link-bg);
+}
+.darkLink:any-link {
+  color: var(--dark-link-color);
+  text-decoration: none;
+}
+
+.darkLink:hover {
+  background-color: var(--dark-link-bg-hover);
 }
 
 #detailsInputBox {

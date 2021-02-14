@@ -8,17 +8,27 @@ import GameArea from "./components/GameArea";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { useState } from "react";
 
-enum MODES {
-  dark = 0,
-  medium,
-  light,
-}
-
 function App() {
+  ///////////          States            //////////////////////
+  //
+  //The Amount of money players will start with
   let [startMoney, setStartMoney] = useState(5000);
+  //
+  //The minimum bet needed to bid on a hand
   let [minBet, setMinBet] = useState(100);
+  //
+  //The number of players 1 human rest cpu
   let [numOfPlayers, setNumOfPlayers] = useState(2);
+  //
+  //The visual style of the app for now just light and dark
   let [mode, setMode] = useState(0);
+  //
+  //The amount of cash held by each player
+  let [heldCash, setHeldCash] = useState([]);
+  //
+  //The hands of cards each player has
+  let [heldCards, setHeldCards] = useState([]);
+
   let appClass = "App " + (mode ? "lightMode" : "darkMode");
   return (
     <div className={appClass}>
@@ -30,6 +40,10 @@ function App() {
               startMoney={startMoney}
               minBet={minBet}
               numOfPlayers={numOfPlayers}
+              setHeldCards={setHeldCards}
+              heldCards={heldCards}
+              setHeldCash={setHeldCash}
+              heldCash={heldCash}
             />
           </Route>
           <Route path="/" exact>
@@ -40,6 +54,7 @@ function App() {
               setStartMoney={setStartMoney}
               setNumOfPlayers={setNumOfPlayers}
               setMinBet={setMinBet}
+              mode={mode}
               test={() =>
                 console.log(
                   "Start Money:",
