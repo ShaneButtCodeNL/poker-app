@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Deck } from "../functions/Deck";
+import Hand from "./Hand";
 let deck = new Deck(false);
 let discardPile = new Deck();
 function GameArea(props: any) {
-  //Round of play
+  //Round of play 1 indexed
   let [turn, setTurn] = useState(1);
-  //Player turn in round
+  //Player turn in round 0 indexed
   let [playerTurn, setPlayerTurn] = useState(0);
   //The Deck compriseing of one deck of standard playing cards with no jokers
   let game = (
@@ -113,19 +114,9 @@ function GameArea(props: any) {
         Click to remove 1st, 3rd, 5th card from p1 hand
       </div>
       <br />
-      <ol>
-        {props.heldCards.map((hand, n) => {
-          return (
-            <li key={n}>
-              <ul>
-                {hand.map((card, x) => {
-                  return <li key={x}>{card.toString()}</li>;
-                })}
-              </ul>
-            </li>
-          );
-        })}
-      </ol>
+      {props.heldCards.map((hand: Array<any>, player: Number) => {
+        return <Hand hand={hand} player={+player} />;
+      })}
     </div>
   );
 }
