@@ -25,7 +25,7 @@ export default function Hand(props: any) {
   return (
     <div
       id={player()}
-      className={props.player % 2 === 0 ? "horazontalHand" : "verticalHand"}
+      className={props.player <= 1 ? "horazontalHand" : "verticalHand"}
     >
       {props.player}
       {props.hand.map((card, cardPos) => {

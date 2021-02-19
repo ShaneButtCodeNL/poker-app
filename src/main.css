@@ -119,3 +119,34 @@ header {
   border-style: solid;
   border-width: 0.1em;
 }
+
+#playAreaContainer {
+  width: 100vw;
+  min-height: 50vh;
+}
+
+#playArea {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: stretch;
+  min-height: inherit;
+}
+
+#centerPlayArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.verticalHand {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+.horazontalHand {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}

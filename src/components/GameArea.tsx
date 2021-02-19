@@ -78,6 +78,24 @@ function GameArea(props: any) {
     hands = null;
   };
 
+  //Render hand if player count is high enough
+  const renderHand = (playerNumber: Number) => {
+    if (playerNumber <= props.numOfPlayers) {
+      if (!props.heldCards[+playerNumber - 1]) {
+        return <div>Failed</div>;
+      }
+      return (
+        <div>
+          <Hand
+            player={+playerNumber - 1}
+            hand={props.heldCards[+playerNumber - 1]}
+            discardAndDraw={discardAndDraw}
+          />
+        </div>
+      );
+    }
+  };
+
   //Delete later used for testing
   const testRemove = () => {
     discardAndDraw([0, 2, 4]);
@@ -114,9 +132,16 @@ function GameArea(props: any) {
         Click to remove 1st, 3rd, 5th card from p1 hand
       </div>
       <br />
-      {props.heldCards.map((hand: Array<any>, player: Number) => {
-        return <Hand hand={hand} player={+player} />;
-      })}
+      <div id="playAreaContainer">
+        <div id="playArea">
+          <div id="leftPlayArea">{renderHand(3)}</div>
+          <div id="centerPlayArea">
+            <div id="centerPlayAreaTop">{renderHand(2)}</div>
+            <div id="centerPlayAreaBottom">{renderHand(1)}</div>
+          </div>
+          <div id="rightPlayArea">{renderHand(4)}</div>
+        </div>
+      </div>
     </div>
   );
 }
