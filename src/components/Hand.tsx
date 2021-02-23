@@ -12,6 +12,12 @@ export default function Hand(props: any) {
     if (props.player === 0) return "playerOneHand";
   };
 
+  //Makes button for confirming discard
+  const continueButton = (player) => {
+    if (player) return;
+    return <div className={"continueButton cardButton btn"}>Continue</div>;
+  };
+
   /**
    * Sets the hold list when you select a card to hold/discard
    * @param cardPos The position of the card to change
@@ -23,21 +29,26 @@ export default function Hand(props: any) {
   };
 
   return (
-    <div
-      id={player()}
-      className={props.player <= 1 ? "horazontalHand" : "verticalHand"}
-    >
-      {props.player}
-      {props.hand.map((card, cardPos) => {
-        return (
-          <Card
-            player={props.player}
-            card={card}
-            cardPos={+cardPos}
-            updateHoldList={updateHoldList}
-          />
-        );
-      })}
+    <div id={player()} className="vFlex centerFlexAlign">
+      <div
+        className={
+          "handZone " + (props.player <= 1 ? "horazontalHand" : "verticalHand")
+        }
+      >
+        {props.player + 1}
+        {props.hand.map((card, cardPos) => {
+          return (
+            <Card
+              player={props.player}
+              card={card}
+              cardPos={+cardPos}
+              updateHoldList={updateHoldList}
+              mode={props.mode}
+            />
+          );
+        })}
+      </div>
+      {continueButton(props.player)}
     </div>
   );
 }

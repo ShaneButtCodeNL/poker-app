@@ -4,10 +4,12 @@ import Hand from "./Hand";
 let deck = new Deck(false);
 let discardPile = new Deck();
 function GameArea(props: any) {
+  ////////////////////////    States    ///////////////////////////////
   //Round of play 1 indexed
   let [turn, setTurn] = useState(1);
   //Player turn in round 0 indexed
   let [playerTurn, setPlayerTurn] = useState(0);
+
   //The Deck compriseing of one deck of standard playing cards with no jokers
   let game = (
     startCash: Number,
@@ -90,15 +92,11 @@ function GameArea(props: any) {
             player={+playerNumber - 1}
             hand={props.heldCards[+playerNumber - 1]}
             discardAndDraw={discardAndDraw}
+            mode={props.mode}
           />
         </div>
       );
     }
-  };
-
-  //Delete later used for testing
-  const testRemove = () => {
-    discardAndDraw([0, 2, 4]);
   };
 
   useEffect(() => {
@@ -112,31 +110,12 @@ function GameArea(props: any) {
   }, [props.numOfPlayers, props.startMoney, props.minBet]);
   return (
     <div>
-      Test Text
-      <br />
-      NumberOfPlayers:{props.numOfPlayers}
-      <br />
-      Starting Cash:{props.startMoney}
-      <br />
-      MinBet:{props.minBet}
-      <br />
-      Deck:{deck.size()} Discard:{discardPile.size()}
-      <br />
-      Each players hand and cash: {props.heldCash[0]}
-      <br />
-      <div
-        onClick={() => {
-          testRemove();
-        }}
-      >
-        Click to remove 1st, 3rd, 5th card from p1 hand
-      </div>
-      <br />
       <div id="playAreaContainer">
         <div id="playArea">
           <div id="leftPlayArea">{renderHand(3)}</div>
           <div id="centerPlayArea">
             <div id="centerPlayAreaTop">{renderHand(2)}</div>
+            <div id="centerPlayAreaCenter"></div>
             <div id="centerPlayAreaBottom">{renderHand(1)}</div>
           </div>
           <div id="rightPlayArea">{renderHand(4)}</div>

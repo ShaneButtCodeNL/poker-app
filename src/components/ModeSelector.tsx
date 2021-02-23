@@ -3,7 +3,7 @@ function ModeSelector(props: any) {
     "modeSelectorDiv " + (props.mode ? "lightModeBtn" : "darkModeBtn");
   return (
     <div
-      className={className}
+      className={className + " btn"}
       onClick={() => props.setMode(props.mode ? 0 : 1)}
     >
       {props.mode ? "Light Mode" : "Dark  Mode"}

@@ -44,6 +44,7 @@ function App() {
               heldCards={heldCards}
               setHeldCash={setHeldCash}
               heldCash={heldCash}
+              mode={mode}
             />
           </Route>
           <Route path="/" exact>

@@ -13,13 +13,39 @@
   --dark-link-bg: rgb(63, 9, 0);
   --dark-link-bg-hover: rgb(102, 15, 0);
   --dark-link-color: rgb(216, 176, 0);
+  --dark-card-bg-color: rgb(83, 83, 83);
+  --dark-card-font-color-black: rgb(0, 0, 0);
+  --dark-card-font-color-red: rgb(146, 0, 0);
+  --dark-card-border: rgb(0, 0, 0);
+  --light-card-bg-color: rgb(255, 255, 255);
+  --light-card-font-color-black: rgb(0, 0, 0);
+  --light-card-font-color-red: rgb(255, 0, 0);
+  --light-card-border: rgb(0, 0, 0);
+  --card-height: 10vw;
+  --card-width: 5vw;
 }
 
 body {
   margin: 0 0 0 0;
   padding: 00 0 0 0;
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
   line-height: 1.5em;
+}
+
+.vFlex {
+  display: flex;
+  flex-direction: column;
+}
+
+.hFlex {
+  display: flex;
+  flex-direction: row;
+}
+
+.centerFlexAlign {
+  display: flex;
+  align-items: center;
 }
 
 header {
@@ -58,6 +84,10 @@ header {
   padding: 0.2em;
   text-align: center;
   line-height: 1.5em;
+}
+
+.btn:hover {
+  cursor: pointer;
 }
 
 .lightModeBtn {
@@ -129,7 +159,6 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  align-items: stretch;
   min-height: inherit;
 }
 
@@ -149,4 +178,59 @@ header {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+}
+
+.cardZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cardButton {
+  border: solid;
+  text-align: center;
+  padding: 0.5em;
+}
+
+.continueButton {
+  margin: 1em;
+}
+
+.cardDark {
+  border: solid;
+  border-color: var(--dark-card-border);
+  background-color: var(--dark-card-bg-color);
+  padding: 1em;
+  margin: 0.3em;
+}
+
+.cardDarkBlack {
+  color: var(--dark-card-font-color-black);
+}
+.cardDarkRed {
+  color: var(--dark-card-font-color-red);
+}
+
+.cardLight {
+  border: solid;
+  border-color: var(--light-card-border);
+  background-color: var(--light-card-bg-color);
+  padding: 1em;
+  margin: 0.3em;
+}
+.cardLightBlack {
+  color: var(--light-card-font-color-black);
+}
+.cardLightRed {
+  color: var(--light-card-font-color-red);
+}
+
+.verticalCard {
+  height: var(--card-height);
+  width: var(--card-width);
+}
+
+.horazontalCard {
+  height: var(--card-width);
+  width: var(--card-height);
 }
