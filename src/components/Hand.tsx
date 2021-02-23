@@ -1,9 +1,6 @@
-import { useState } from "react";
 import Card from "./Card";
 
 export default function Hand(props: any) {
-  const [holdList, setHoldList] = useState([true, true, true, true, true]);
-
   //Labels player
   const player = () => {
     if (props.player === 3) return "playerFourHand";
@@ -15,7 +12,14 @@ export default function Hand(props: any) {
   //Makes button for confirming discard
   const continueButton = (player) => {
     if (player) return;
-    return <div className={"continueButton cardButton btn"}>Continue</div>;
+    return (
+      <div
+        className={"continueButton cardButton btn"}
+        onClick={() => props.continueClickEvent()}
+      >
+        Continue
+      </div>
+    );
   };
 
   /**
@@ -23,13 +27,14 @@ export default function Hand(props: any) {
    * @param cardPos The position of the card to change
    */
   const updateHoldList = (cardPos: Number) => {
-    const hl = [...holdList];
+    const hl = [...props.holdList];
     hl[+cardPos] = !hl[+cardPos];
-    setHoldList(hl);
+    props.setHoldList(hl);
   };
 
   return (
     <div id={player()} className="vFlex centerFlexAlign">
+      {continueButton(props.player)}
       <div
         className={
           "handZone " + (props.player <= 1 ? "horazontalHand" : "verticalHand")
@@ -42,13 +47,13 @@ export default function Hand(props: any) {
               player={props.player}
               card={card}
               cardPos={+cardPos}
+              holdList={props.holdList}
               updateHoldList={updateHoldList}
               mode={props.mode}
             />
           );
         })}
       </div>
-      {continueButton(props.player)}
     </div>
   );
 }

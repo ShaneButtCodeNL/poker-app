@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Card(props: any) {
   const [hold, setHold] = useState(true);
   //Orientation of card 0 is verticle 1 is horazontal
-  const [orientation, setOrientation] = useState(props.player < 2 ? 0 : 1);
+  const [orientation] = useState(props.player < 2 ? 0 : 1);
 
   const holdClickEvent = (cardPos: Number) => {
-    setHold(!hold);
     props.updateHoldList(+cardPos);
   };
+
+  useEffect(() => {
+    setHold(props.holdList[props.cardPos]);
+  }, [props.holdList, props.cardPos]);
+
   const cardPos = () => {
     return orientation ? "horazontalCard" : "verticalCard";
   };

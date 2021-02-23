@@ -9,6 +9,8 @@ function GameArea(props: any) {
   let [turn, setTurn] = useState(1);
   //Player turn in round 0 indexed
   let [playerTurn, setPlayerTurn] = useState(0);
+  //Positions of cards to be kept
+  const [holdList, setHoldList] = useState([true, true, true, true, true]);
 
   //The Deck compriseing of one deck of standard playing cards with no jokers
   let game = (
@@ -80,6 +82,17 @@ function GameArea(props: any) {
     hands = null;
   };
 
+  //Discards selected cards
+  const continueClickEvent = () => {
+    let pos = [];
+    for (let i = 0; i < +holdList.length; i++) {
+      if (!holdList[i]) pos.push(i);
+    }
+    discardAndDraw(pos);
+    setHoldList([true, true, true, true, true]);
+    console.log("Deck", deck.size(), "\nDiscard:", discardPile.size());
+  };
+
   //Render hand if player count is high enough
   const renderHand = (playerNumber: Number) => {
     if (playerNumber <= props.numOfPlayers) {
@@ -93,6 +106,9 @@ function GameArea(props: any) {
             hand={props.heldCards[+playerNumber - 1]}
             discardAndDraw={discardAndDraw}
             mode={props.mode}
+            holdList={holdList}
+            setHoldList={setHoldList}
+            continueClickEvent={continueClickEvent}
           />
         </div>
       );
