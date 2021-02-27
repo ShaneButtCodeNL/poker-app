@@ -33,11 +33,12 @@ export default function Hand(props: any) {
   };
 
   return (
-    <div id={player()} className="vFlex centerFlexAlign">
+    <div id={player()} className="vFlex centerFlexAlign maxHeight">
       {continueButton(props.player)}
       <div
         className={
-          "handZone " + (props.player <= 1 ? "horazontalHand" : "verticalHand")
+          "handZone maxHeight " +
+          (props.player <= 1 ? "horazontalHand" : "verticalHand")
         }
       >
         {props.player + 1}
@@ -50,6 +51,7 @@ export default function Hand(props: any) {
               holdList={props.holdList}
               updateHoldList={updateHoldList}
               mode={props.mode}
+              cardDesign={props.cardDesign}
             />
           );
         })}

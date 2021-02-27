@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Deck } from "../functions/Deck";
 import Hand from "./Hand";
+import DeckArea from "./DeckArea";
+import PlayerInfo from "./PlayerInfo";
 let deck = new Deck(false);
 let discardPile = new Deck();
 function GameArea(props: any) {
@@ -11,6 +13,8 @@ function GameArea(props: any) {
   let [playerTurn, setPlayerTurn] = useState(0);
   //Positions of cards to be kept
   const [holdList, setHoldList] = useState([true, true, true, true, true]);
+  //Card design
+  const [cardDesign, setCardDesign] = useState(0);
 
   //The Deck compriseing of one deck of standard playing cards with no jokers
   let game = (
@@ -93,6 +97,14 @@ function GameArea(props: any) {
     console.log("Deck", deck.size(), "\nDiscard:", discardPile.size());
   };
 
+  const renderPlayerInfo = (player: Number) => {
+    if (props.numOfPlayers >= +player) {
+      return (
+        <PlayerInfo player={+player} heldCash={props.heldCash[+player - 1]} />
+      );
+    }
+  };
+
   //Render hand if player count is high enough
   const renderHand = (playerNumber: Number) => {
     if (playerNumber <= props.numOfPlayers) {
@@ -100,17 +112,16 @@ function GameArea(props: any) {
         return <div>Failed</div>;
       }
       return (
-        <div>
-          <Hand
-            player={+playerNumber - 1}
-            hand={props.heldCards[+playerNumber - 1]}
-            discardAndDraw={discardAndDraw}
-            mode={props.mode}
-            holdList={holdList}
-            setHoldList={setHoldList}
-            continueClickEvent={continueClickEvent}
-          />
-        </div>
+        <Hand
+          player={+playerNumber - 1}
+          hand={props.heldCards[+playerNumber - 1]}
+          discardAndDraw={discardAndDraw}
+          mode={props.mode}
+          holdList={holdList}
+          setHoldList={setHoldList}
+          continueClickEvent={continueClickEvent}
+          cardDesign={cardDesign}
+        />
       );
     }
   };
@@ -127,14 +138,34 @@ function GameArea(props: any) {
   return (
     <div>
       <div id="playAreaContainer">
+        <div id="designSelector"></div>
         <div id="playArea">
-          <div id="leftPlayArea">{renderHand(3)}</div>
-          <div id="centerPlayArea">
-            <div id="centerPlayAreaTop">{renderHand(2)}</div>
-            <div id="centerPlayAreaCenter"></div>
-            <div id="centerPlayAreaBottom">{renderHand(1)}</div>
+          <div id="leftPlayArea">
+            {renderPlayerInfo(3)}
+            {renderHand(3)}
           </div>
-          <div id="rightPlayArea">{renderHand(4)}</div>
+          <div id="centerPlayArea">
+            <div id="centerPlayAreaTop">
+              {renderPlayerInfo(2)}
+              {renderHand(2)}
+            </div>
+            <div id="centerPlayAreaCenter">
+              <DeckArea
+                deck={deck}
+                discardPile={discardPile}
+                cardDesign={cardDesign}
+                mode={props.mode}
+              />
+            </div>
+            <div id="centerPlayAreaBottom">
+              {renderPlayerInfo(1)}
+              {renderHand(1)}
+            </div>
+          </div>
+          <div id="rightPlayArea">
+            {renderPlayerInfo(4)}
+            {renderHand(4)}
+          </div>
         </div>
       </div>
     </div>

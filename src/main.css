@@ -16,13 +16,17 @@
   --dark-card-bg-color: rgb(83, 83, 83);
   --dark-card-font-color-black: rgb(0, 0, 0);
   --dark-card-font-color-red: rgb(146, 0, 0);
+  --dark-card-back-stripe-two: rgb(109, 23, 23);
+  --dark-card-back-stripe-one: rgb(60, 36, 126);
   --dark-card-border: rgb(0, 0, 0);
   --light-card-bg-color: rgb(255, 255, 255);
   --light-card-font-color-black: rgb(0, 0, 0);
   --light-card-font-color-red: rgb(255, 0, 0);
+  --light-card-back-stripe-one: rgb(255, 0, 0);
+  --light-card-back-stripe-two: rgb(124, 78, 252);
   --light-card-border: rgb(0, 0, 0);
-  --card-height: 10vw;
-  --card-width: 5vw;
+  --card-height: 8vw;
+  --card-width: 4vw;
 }
 
 body {
@@ -31,6 +35,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 1em;
   line-height: 1.5em;
+}
+
+.maxHeight {
+  height: 100%;
 }
 
 .vFlex {
@@ -162,6 +170,30 @@ header {
   min-height: inherit;
 }
 
+#leftPlayArea {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#rightPlayArea {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+#centerPlayAreaTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#centerPlayAreaBottom {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+
 #centerPlayArea {
   display: flex;
   flex-direction: column;
@@ -171,7 +203,7 @@ header {
 .verticalHand {
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .horazontalHand {
@@ -233,4 +265,60 @@ header {
 .horazontalCard {
   height: var(--card-width);
   width: var(--card-height);
+}
+
+.plainCardBackDark {
+  background-image: linear-gradient(
+    45deg,
+    var(--dark-card-back-stripe-one) 17.5%,
+    var(--dark-card-back-stripe-two) 17.5%,
+    var(--dark-card-back-stripe-two) 50%,
+    var(--dark-card-back-stripe-one) 50%,
+    var(--dark-card-back-stripe-one) 67.5%,
+    var(--dark-card-back-stripe-two) 67.5%,
+    var(--dark-card-back-stripe-two) 100%
+  );
+  background-size: 28.28px 28.28px;
+}
+
+.plainCardBackLight {
+  background-image: linear-gradient(
+    45deg,
+    var(--light-card-back-stripe-one) 17.5%,
+    var(--light-card-back-stripe-two) 17.5%,
+    var(--light-card-back-stripe-two) 50%,
+    var(--light-card-back-stripe-one) 50%,
+    var(--light-card-back-stripe-one) 67.5%,
+    var(--light-card-back-stripe-two) 67.5%,
+    var(--light-card-back-stripe-two) 100%
+  );
+  background-size: 28.28px 28.28px;
+}
+
+.plainCardBackBlank {
+  border: solid;
+  padding: 1em;
+  margin: 0.3em;
+  border-color: rgba(0, 0, 0, 0);
+}
+
+#deckArea {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 1em;
+}
+
+.deckPosition {
+  margin: 0.5em;
+  border-style: dashed;
+  border-color: black;
+}
+
+.playerInfoBox {
+  border: solid;
+  border-width: 1px;
+  border-color: black;
+  padding: 0.2em;
+  margin: 0.2em;
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { renderFace, renderBack } from "../functions/RenderCardFace";
 
 export default function Card(props: any) {
   const [hold, setHold] = useState(true);
@@ -45,9 +46,38 @@ export default function Card(props: any) {
         </div>
       );
   }
+
+  function renderCard() {
+    if (props.cardDesign) {
+      const cardLocation = props.player
+        ? renderBack(props.design)
+        : renderFace(props.card, props.design);
+      return (
+        <div>
+          <img src={cardLocation}></img>
+        </div>
+      );
+    } else {
+      if (!props.player) {
+        return (
+          <div className={cardClass(props.card)}>{props.card.toString()}</div>
+        );
+      } else {
+        return (
+          <div
+            className={
+              cardClass(props.card) +
+              (props.mode ? " plainCardBackLight" : " plainCardBackDark")
+            }
+          ></div>
+        );
+      }
+    }
+  }
+
   return (
     <div className="cardZone">
-      <div className={cardClass(props.card)}>{props.card.toString()}</div>
+      {renderCard()}
       {makeHold(props.player)}
     </div>
   );
