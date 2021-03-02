@@ -41,7 +41,6 @@ export default function Hand(props: any) {
           (props.player <= 1 ? "horazontalHand" : "verticalHand")
         }
       >
-        {props.player + 1}
         {props.hand.map((card, cardPos) => {
           return (
             <Card

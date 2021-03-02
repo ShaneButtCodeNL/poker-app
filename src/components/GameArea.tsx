@@ -3,6 +3,7 @@ import { Deck } from "../functions/Deck";
 import Hand from "./Hand";
 import DeckArea from "./DeckArea";
 import PlayerInfo from "./PlayerInfo";
+//The Deck
 let deck = new Deck(false);
 let discardPile = new Deck();
 function GameArea(props: any) {
@@ -11,10 +12,16 @@ function GameArea(props: any) {
   let [turn, setTurn] = useState(1);
   //Player turn in round 0 indexed
   let [playerTurn, setPlayerTurn] = useState(0);
+  //The size of the pot
+  let [pot, setPot] = useState(0);
   //Positions of cards to be kept
   const [holdList, setHoldList] = useState([true, true, true, true, true]);
   //Card design
   const [cardDesign, setCardDesign] = useState(0);
+
+  ///////////////////////////////////////////////////
+  // Used for development remove to separate file ///
+  ///////////////////////////////////////////////////
 
   //The Deck compriseing of one deck of standard playing cards with no jokers
   let game = (
@@ -96,6 +103,8 @@ function GameArea(props: any) {
     setHoldList([true, true, true, true, true]);
     console.log("Deck", deck.size(), "\nDiscard:", discardPile.size());
   };
+
+  ///////////End
 
   const renderPlayerInfo = (player: Number) => {
     if (props.numOfPlayers >= +player) {
