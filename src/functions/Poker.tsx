@@ -3,6 +3,8 @@ import { Card, Deck } from "./Deck";
 class Poker {
   //The minimum amount allowed for a bet
   private minBet: Number;
+  //Current bet
+  private currentBet: Number;
   //Sum of the bets for current round
   private pot: Number;
   //Number of players in game 1-4
@@ -17,6 +19,10 @@ class Poker {
   private discardPile: Deck;
   //Functions for altering state of app
   private stateFunctions: any;
+  //Folded players
+  private folds: Set<Number>;
+  //Amount betted this round
+  private bets: Array<Number>;
 
   /**
    * Sets up initial state of the game
@@ -30,10 +36,13 @@ class Poker {
     numOfPlayers: Number,
     stateFunctions: any
   ) {
-    this.pot = 0;
-    this.stateFunctions.setPot(this.pot);
     this.stateFunctions = stateFunctions;
+    this.pot = 0;
+    this.bets = new Array(numOfPlayers);
+    this.folds = new Set();
+    this.stateFunctions.setPot(this.pot);
     this.minBet = +minBet;
+    this.currentBet = +minBet;
     this.deck = new Deck(false);
     this.discardPile = new Deck();
     this.numOfPlayers = +numOfPlayers;
@@ -47,6 +56,8 @@ class Poker {
     for (let i = 0; i < this.numOfPlayers; i++) {
       //Gives Player cash
       this.heldCash.push(startCash);
+      //initialize bets
+      this.bets[i] = 0;
       //Draw 5 cards for player
       let hand = [];
       for (let j = 0; j < 5; j++) {
@@ -54,8 +65,18 @@ class Poker {
       }
       this.heldCards.push(hand);
     }
-    this.stateFunctions.setHeldCash(this.heldCash);
+    this.stateFunctions.setHeldCash([...this.heldCash]);
     this.stateFunctions.setHeldCards(this.heldCards);
+    stateFunctions.setDeck(this.deck);
+    stateFunctions.setDiscardPile(this.discardPile);
+  }
+
+  /**
+   * Reset states for new round of play
+   */
+  public reset() {
+    this.currentBet = this.minBet;
+    this.folds = new Set();
   }
 
   //The ammount of cards remaining in the deck
@@ -77,7 +98,9 @@ class Poker {
       this.discardPile = new Deck();
       this.deck.shuffle();
     }
-    return this.deck.draw();
+    const card = this.deck.draw();
+    this.stateFunctions.setDeck(this.deck);
+    return card;
   }
 
   /**
@@ -87,10 +110,12 @@ class Poker {
    */
   public discardAndDraw(player: Number, cardPositions: Array<Number>) {
     let hands = [...this.heldCards];
-    for (let pos in cardPositions) {
+    for (let pos of cardPositions) {
       this.discardPile.addToTop(hands[+player][+pos]);
-      hands[+player][pos] = this.draw();
+      hands[+player][+pos] = this.draw();
     }
+    this.stateFunctions.setDiscardPile(this.discardPile);
+    this.stateFunctions.setDeck(this.deck);
     this.heldCards = [...hands];
     this.stateFunctions.setHeldCards([...hands]);
   }
@@ -119,6 +144,42 @@ class Poker {
     return;
   }
 
+  /**
+   * Checks if a player can bet or has folded
+   * @param player The player number
+   */
+  public isOut(player: Number) {
+    return this.canBet(+player) && !this.folds.has(+player);
+  }
+
+  /**
+   * Checks if a player can make a bet
+   * @param player The Player betting
+   * @param bet The bet they want to make
+   */
+  public canBet(player: Number, bet?: Number) {
+    return this.heldCash[+player] >= (bet ? bet : this.currentBet);
+  }
+
+  /**
+   * Initial bet to play a game of poker
+   */
+  public ante() {
+    for (let i = 0; i < this.numOfPlayers; i++) {
+      this.makeBet(i, this.minBet);
+    }
+  }
+
+  /**
+   * Checks if a player can check
+   */
+  public canCheck() {
+    for (let bet of this.bets) {
+      if (bet) return false;
+    }
+    return true;
+  }
+
   public allIn(player: Number) {
     let cash = [...this.heldCash];
     this.pot = +this.pot + +cash[+player];
@@ -126,6 +187,34 @@ class Poker {
     this.stateFunctions.setHeldCash([...cash]);
     this.heldCash = [...cash];
     this.stateFunctions.setPot(this.pot);
+  }
+
+  /**
+   * Player makes the min allowable bet
+   * @param player The player making a bet
+   */
+  public call(player: Number) {
+    if (this.canBet(+player)) this.makeBet(+player, this.minBet);
+  }
+
+  /**
+   * Updates min allowed bet this round
+   * @param bet The amount needed to call
+   */
+  public updateBet(bet: Number) {
+    this.currentBet = +bet;
+  }
+
+  /**
+   * Player raises the minimum bet needed to play
+   * @param player The Player Raiseing
+   * @param newBet The Amount they are raising to
+   */
+  public raise(player: Number, newBet: Number) {
+    if (this.canBet(+player, +newBet)) {
+      this.updateBet(newBet);
+      this.makeBet(player, newBet);
+    }
   }
 }
 export default Poker;
