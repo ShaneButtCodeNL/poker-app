@@ -23,6 +23,8 @@ class Poker {
   private folds: Set<Number>;
   //Amount betted this round
   private bets: Array<Number>;
+  //Current round of turn
+  private round:Number;
 
   /**
    * Sets up initial state of the game
@@ -38,6 +40,7 @@ class Poker {
   ) {
     this.stateFunctions = stateFunctions;
     this.pot = 0;
+    this.round=1;
     this.bets = new Array(numOfPlayers);
     this.folds = new Set();
     this.stateFunctions.setPot(this.pot);
