@@ -24,7 +24,7 @@ class Poker {
   //Amount betted this round
   private bets: Array<Number>;
   //Current round of turn
-  private round:Number;
+  private round: Number;
 
   /**
    * Sets up initial state of the game
@@ -40,7 +40,7 @@ class Poker {
   ) {
     this.stateFunctions = stateFunctions;
     this.pot = 0;
-    this.round=1;
+    this.round = 1;
     this.bets = new Array(numOfPlayers);
     this.folds = new Set();
     this.stateFunctions.setPot(this.pot);
@@ -60,7 +60,7 @@ class Poker {
       //Gives Player cash
       this.heldCash.push(startCash);
       //initialize bets
-      this.bets[i] = 0;
+      this.bets.push(0);
       //Draw 5 cards for player
       let hand = [];
       for (let j = 0; j < 5; j++) {
@@ -75,11 +75,59 @@ class Poker {
   }
 
   /**
+   * First turn in a round of play everyone antes to play if they can't they are out
+   */
+  public deal() {
+    let hands = [];
+    //set up players
+    for (let i = 0; i < this.numOfPlayers; i++) {
+      //Can ante if can't they are out of the game
+      if (this.canBet(i, this.minBet)) {
+        this.ante(i);
+        let hand = [];
+        //Draw 5 cards
+        for (let j = 0; j < 5; j++) {
+          hand.push(this.draw());
+        }
+        hands.push(hand);
+      } else {
+        //Empty hand
+        hands.push([]);
+      }
+    }
+    this.stateFunctions.setHeldCards([...hands]);
+  }
+
+  /**
+   * A round where playes that can play or haven't folded may call or raise bet
+   */
+  public bettingRound() {
+    /**
+     *        TODO
+     */
+  }
+
+  /**
    * Reset states for new round of play
    */
   public reset() {
+    //Resets current min bet
     this.currentBet = this.minBet;
+    //resets folds
     this.folds = new Set();
+    //Resets hands
+    let hands = [...this.heldCards];
+    for (let hand of hands) {
+      for (let card of hand) {
+        this.discardPile.addToTop(card);
+      }
+    }
+    hands = [];
+    //resets made bets
+    for (let i = 0; i < this.bets.length; i++) {
+      this.bets[i] = 0;
+    }
+    this.stateFunctions.setHeldCards([]);
   }
 
   //The ammount of cards remaining in the deck
@@ -130,7 +178,7 @@ class Poker {
    */
   public makeBet(player: Number, bet: Number) {
     //Bet is high enough
-    if (bet >= this.minBet) {
+    if (bet >= this.currentBet) {
       //Has money for bet
       if (this.heldCash[+player] >= +bet) {
         let cash = [...this.heldCash];
@@ -148,11 +196,11 @@ class Poker {
   }
 
   /**
-   * Checks if a player can bet or has folded
+   * Checks if a player has folded
    * @param player The player number
    */
   public isOut(player: Number) {
-    return this.canBet(+player) && !this.folds.has(+player);
+    return !this.folds.has(+player);
   }
 
   /**
@@ -166,11 +214,16 @@ class Poker {
 
   /**
    * Initial bet to play a game of poker
+   * @param player player to ante if null everyone antes
    */
-  public ante() {
-    for (let i = 0; i < this.numOfPlayers; i++) {
-      this.makeBet(i, this.minBet);
+  public ante(player?: number) {
+    if (player === null) {
+      for (let i = 0; i < this.numOfPlayers; i++) {
+        this.makeBet(i, this.minBet);
+      }
+      return;
     }
+    this.makeBet(player, this.minBet);
   }
 
   /**
