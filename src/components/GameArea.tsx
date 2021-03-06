@@ -6,6 +6,18 @@ import PlayerInfo from "./PlayerInfo";
 import Poker from "../functions/Poker";
 
 function GameArea(props: any) {
+  const getMyBet = async (currentbet: Number, ammountBet: Number) => {
+    /**
+     * FIX JUST FOR TEST
+     */
+    return parseInt(
+      prompt(
+        "Please enter your bet:\nTo Call: $" +
+          (+currentbet - +ammountBet) +
+          "\n"
+      )
+    );
+  };
   ////////////////////////    States    ///////////////////////////////
   //The Deck
   const [deck, setDeck] = useState(null);
@@ -22,19 +34,18 @@ function GameArea(props: any) {
   //Card design
   const [cardDesign, setCardDesign] = useState(0);
   //The game
-  const [pokerGame, setPokerGame] = useState(
-    () =>
-      new Poker(props.minBet, props.startMoney, props.numOfPlayers, {
-        setTurn: setTurn,
-        setPlayerTurn: setPlayerTurn,
-        setPot: setPot,
-        setHoldList: setHoldList,
-        setHeldCards: props.setHeldCards,
-        setHeldCash: props.setHeldCash,
-        setDeck: setDeck,
-        setDiscardPile: setDiscardPile,
-      })
-  );
+  const [pokerGame, setPokerGame] = useState(() => {
+    return new Poker(props.minBet, props.startMoney, props.numOfPlayers, {
+      setTurn: setTurn,
+      setPlayerTurn: setPlayerTurn,
+      setPot: setPot,
+      setHoldList: setHoldList,
+      setHeldCards: props.setHeldCards,
+      setHeldCash: props.setHeldCash,
+      setDeck: setDeck,
+      setDiscardPile: setDiscardPile,
+    });
+  });
 
   //Discards selected cards
   const continueClickEvent = () => {
@@ -78,6 +89,20 @@ function GameArea(props: any) {
   return (
     <div>
       <div id="playAreaContainer">
+        <button
+          onClick={() => {
+            pokerGame.makeBet(0, 200);
+          }}
+        >
+          Test Bet $200
+        </button>
+        <button
+          onClick={() => {
+            pokerGame.bettingRound(getMyBet);
+          }}
+        >
+          Test Betting Round
+        </button>
         <div id="designSelector"></div>
         <div id="playArea">
           <div id="leftPlayArea">

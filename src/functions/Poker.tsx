@@ -1,4 +1,5 @@
 import { Card, Deck } from "./Deck";
+import { BadPokerCards } from "./BadPokerLogic";
 
 class Poker {
   //The minimum amount allowed for a bet
@@ -19,12 +20,12 @@ class Poker {
   private discardPile: Deck;
   //Functions for altering state of app
   private stateFunctions: any;
-  //Folded players
-  private folds: Set<Number>;
   //Amount betted this round
   private bets: Array<Number>;
   //Current round of turn
   private round: Number;
+  //Keepstrack of turns in a round
+  private turnCount: Number;
 
   /**
    * Sets up initial state of the game
@@ -40,9 +41,9 @@ class Poker {
   ) {
     this.stateFunctions = stateFunctions;
     this.pot = 0;
+    this.turnCount = 0;
     this.round = 1;
-    this.bets = new Array(numOfPlayers);
-    this.folds = new Set();
+    this.bets = [];
     this.stateFunctions.setPot(this.pot);
     this.minBet = +minBet;
     this.currentBet = +minBet;
@@ -81,7 +82,7 @@ class Poker {
     let hands = [];
     //set up players
     for (let i = 0; i < this.numOfPlayers; i++) {
-      //Can ante if can't they are out of the game
+      //Can ante? if can't they are out of the game
       if (this.canBet(i, this.minBet)) {
         this.ante(i);
         let hand = [];
@@ -99,22 +100,64 @@ class Poker {
   }
 
   /**
-   * A round where playes that can play or haven't folded may call or raise bet
+   * Checks if all players playing in round bet same ammount
+   * @returns All players that are playing bets are equal
    */
-  public bettingRound() {
-    /**
-     *        TODO
-     */
+  public checkBets() {
+    //Just getting an ammount betted useing main players bet
+    let betAmmount = this.bets[0];
+    //For each player
+    for (let i = 0; i < this.numOfPlayers; i++) {
+      //If player is playing
+      if (!this.isOut(+i)) {
+        //If they bet differently than main player
+        if (this.bets[+i] !== betAmmount) return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Gets whose turn it is
+   * @returns The player number turn
+   */
+  private getPlayerTurn() {
+    return +this.turnCount % +this.numOfPlayers;
+  }
+
+  /**
+   * A round where players that can play or haven't folded may call or raise bet
+   * @param player The players turn
+   */
+  public async bettingRound(getBet) {
+    console.log("Click betting Round");
+    console.log("Players:", this.numOfPlayers);
+    while (this.turnCount < this.numOfPlayers) {
+      console.log("turn:", this.getPlayerTurn());
+      if (this.getPlayerTurn()) {
+        console.log("Player" + this.getPlayerTurn() + ":" + this.currentBet);
+        this.call(+this.getPlayerTurn());
+      } else {
+        await getBet(+this.currentBet, +this.bets[0]).then((val: Number) => {
+          console.log("myBet", val);
+          this.makeBet(0, +val);
+        });
+      }
+      this.turnCount = +this.turnCount + 1;
+    }
+    this.turnCount = 0;
+    this.currentBet = this.minBet;
+    this.resetBets();
   }
 
   /**
    * Reset states for new round of play
    */
   public reset() {
+    //Resets turn counter
+    this.turnCount = 0;
     //Resets current min bet
     this.currentBet = this.minBet;
-    //resets folds
-    this.folds = new Set();
     //Resets hands
     let hands = [...this.heldCards];
     for (let hand of hands) {
@@ -128,6 +171,12 @@ class Poker {
       this.bets[i] = 0;
     }
     this.stateFunctions.setHeldCards([]);
+  }
+
+  private resetBets() {
+    for (let i = 0; i < this.bets.length; i++) {
+      this.bets[i] = 0;
+    }
   }
 
   //The ammount of cards remaining in the deck
@@ -160,11 +209,16 @@ class Poker {
    * @param cardPositions The zero based positions of cards they are discarding ex [0,1,4]
    */
   public discardAndDraw(player: Number, cardPositions: Array<Number>) {
+    //Copy hands
     let hands = [...this.heldCards];
+    //For each selected card position
     for (let pos of cardPositions) {
+      //Add selected card to discard pile
       this.discardPile.addToTop(hands[+player][+pos]);
+      //Draw new card and place in hand in same position
       hands[+player][+pos] = this.draw();
     }
+    //Update states
     this.stateFunctions.setDiscardPile(this.discardPile);
     this.stateFunctions.setDeck(this.deck);
     this.heldCards = [...hands];
@@ -176,17 +230,26 @@ class Poker {
    * @param player The player makeing the bet
    * @param bet The amount to be bet
    */
-  public makeBet(player: Number, bet: Number) {
+  public async makeBet(player: Number, bet: Number) {
     //Bet is high enough
-    if (bet >= this.currentBet) {
+    if (+bet + +this.bets[+player] >= this.currentBet) {
       //Has money for bet
       if (this.heldCash[+player] >= +bet) {
+        //Update current bet
+        this.updateBet(+bet + +this.bets[+player]);
+        //Copy money held
         let cash = [...this.heldCash];
+        //Take bet from player
         cash[+player] = +cash[+player] - +bet;
+        //Add bet to pot
         this.pot = +this.pot + +bet;
+        //Updates cash ammounts
         this.stateFunctions.setHeldCash([...cash]);
         this.heldCash = [...cash];
+        //Updates pot
         this.stateFunctions.setPot(this.pot);
+        //Updates current bet
+        this.bets[+player] = +this.bets[+player] + +bet;
       }
     }
     /************************** 
@@ -200,7 +263,8 @@ class Poker {
    * @param player The player number
    */
   public isOut(player: Number) {
-    return !this.folds.has(+player);
+    //Checks if a player is playing in round by checking if they have a hand
+    return this.heldCards[+player].length === 0;
   }
 
   /**
@@ -209,7 +273,10 @@ class Poker {
    * @param bet The bet they want to make
    */
   public canBet(player: Number, bet?: Number) {
-    return this.heldCash[+player] >= (bet ? bet : this.currentBet);
+    return (
+      this.heldCash[+player] >=
+      +(bet ? bet : this.currentBet) - +this.bets[+player]
+    );
   }
 
   /**
@@ -249,8 +316,8 @@ class Poker {
    * Player makes the min allowable bet
    * @param player The player making a bet
    */
-  public call(player: Number) {
-    if (this.canBet(+player)) this.makeBet(+player, this.minBet);
+  public async call(player: Number) {
+    if (this.canBet(+player)) this.makeBet(+player, this.currentBet);
   }
 
   /**
@@ -269,7 +336,7 @@ class Poker {
   public raise(player: Number, newBet: Number) {
     if (this.canBet(+player, +newBet)) {
       this.updateBet(newBet);
-      this.makeBet(player, newBet);
+      this.makeBet(player, +newBet - +this.bets[+player]);
     }
   }
 }
