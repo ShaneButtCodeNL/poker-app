@@ -31,6 +31,10 @@ export default function DeckArea(props: any) {
       <div id="deckPile" className="deckPosition">
         {renderDeck()}
       </div>
+      <div id="potInfo">
+        POT:
+        <br />${props.pot}
+      </div>
       <div id="discardPile" className="deckPosition">
         {renderDiscard()}
       </div>

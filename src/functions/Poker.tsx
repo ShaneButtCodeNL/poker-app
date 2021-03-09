@@ -16,7 +16,7 @@ class Poker {
   private heldCash: Array<Number>;
   //The deck of cards with no jokers
   private deck: Deck;
-  //Discsrded cards added back to the deck when it runs out
+  //Discarded cards added back to the deck when it runs out
   private discardPile: Deck;
   //Functions for altering state of app
   private stateFunctions: any;
@@ -41,6 +41,7 @@ class Poker {
   ) {
     this.stateFunctions = stateFunctions;
     this.pot = 0;
+    this.round = 1;
     this.turnCount = 0;
     this.round = 1;
     this.bets = [];
@@ -73,30 +74,7 @@ class Poker {
     this.stateFunctions.setHeldCards(this.heldCards);
     stateFunctions.setDeck(this.deck);
     stateFunctions.setDiscardPile(this.discardPile);
-  }
-
-  /**
-   * First turn in a round of play everyone antes to play if they can't they are out
-   */
-  public deal() {
-    let hands = [];
-    //set up players
-    for (let i = 0; i < this.numOfPlayers; i++) {
-      //Can ante? if can't they are out of the game
-      if (this.canBet(i, this.minBet)) {
-        this.ante(i);
-        let hand = [];
-        //Draw 5 cards
-        for (let j = 0; j < 5; j++) {
-          hand.push(this.draw());
-        }
-        hands.push(hand);
-      } else {
-        //Empty hand
-        hands.push([]);
-      }
-    }
-    this.stateFunctions.setHeldCards([...hands]);
+    stateFunctions.setRound(this.round);
   }
 
   /**
@@ -118,6 +96,37 @@ class Poker {
   }
 
   /**
+   * Checks if a player has folded
+   * @param player The player number
+   */
+  public isOut(player: Number) {
+    //Checks if a player is playing in round by checking if they have a hand
+    return this.heldCards[+player].length === 0;
+  }
+
+  /**
+   * Checks if a player can make a bet
+   * @param player The Player betting
+   * @param bet The bet they want to make
+   */
+  public canBet(player: Number, bet?: Number) {
+    return (
+      this.heldCash[+player] >=
+      +(bet ? bet : this.currentBet) - +this.bets[+player]
+    );
+  }
+
+  /**
+   * Checks if a player can check
+   */
+  public canCheck() {
+    for (let bet of this.bets) {
+      if (bet) return false;
+    }
+    return true;
+  }
+
+  /**
    * Gets whose turn it is
    * @returns The player number turn
    */
@@ -125,29 +134,14 @@ class Poker {
     return +this.turnCount % +this.numOfPlayers;
   }
 
-  /**
-   * A round where players that can play or haven't folded may call or raise bet
-   * @param player The players turn
-   */
-  public async bettingRound(getBet) {
-    console.log("Click betting Round");
-    console.log("Players:", this.numOfPlayers);
-    while (this.turnCount < this.numOfPlayers) {
-      console.log("turn:", this.getPlayerTurn());
-      if (this.getPlayerTurn()) {
-        console.log("Player" + this.getPlayerTurn() + ":" + this.currentBet);
-        this.call(+this.getPlayerTurn());
-      } else {
-        await getBet(+this.currentBet, +this.bets[0]).then((val: Number) => {
-          console.log("myBet", val);
-          this.makeBet(0, +val);
-        });
-      }
-      this.turnCount = +this.turnCount + 1;
-    }
-    this.turnCount = 0;
-    this.currentBet = this.minBet;
-    this.resetBets();
+  //The ammount of cards remaining in the deck
+  public getDeckSize() {
+    return this.deck.size();
+  }
+
+  //The ammount of cards in the discard pile
+  public getDiscardPileSize() {
+    return this.discardPile.size();
   }
 
   /**
@@ -179,23 +173,14 @@ class Poker {
     }
   }
 
-  //The ammount of cards remaining in the deck
-  public getDeckSize() {
-    return this.deck.size();
-  }
-
-  //The ammount of cards in the discard pile
-  public getDiscardPileSize() {
-    return this.discardPile.size();
-  }
-
   /**
    * Draws a card from the deck if the deck is empty adds discarded cards to the deck then shuffles and draws
    */
-  private draw() {
-    if (!this.deck.canDraw) {
+  private async draw() {
+    if (!this.deck.canDraw()) {
       this.deck.addDeckToBottom(this.discardPile);
       this.discardPile = new Deck();
+      this.stateFunctions.setDiscardPile(this.discardPile);
       this.deck.shuffle();
     }
     const card = this.deck.draw();
@@ -208,7 +193,7 @@ class Poker {
    * @param player The player number who is discarding and drawing zero based
    * @param cardPositions The zero based positions of cards they are discarding ex [0,1,4]
    */
-  public discardAndDraw(player: Number, cardPositions: Array<Number>) {
+  public async discardAndDraw(player: Number, cardPositions: Array<Number>) {
     //Copy hands
     let hands = [...this.heldCards];
     //For each selected card position
@@ -216,7 +201,20 @@ class Poker {
       //Add selected card to discard pile
       this.discardPile.addToTop(hands[+player][+pos]);
       //Draw new card and place in hand in same position
-      hands[+player][+pos] = this.draw();
+      await this.draw().then((card) => {
+        console.log(card.toString());
+        hands[+player][+pos] = card;
+      });
+      /**
+       * *********Testing remove
+       */
+      console.log(
+        "Deck:",
+        this.getDeckSize(),
+        "\nDiscard:",
+        this.getDiscardPileSize()
+      );
+      //***************** */
     }
     //Update states
     this.stateFunctions.setDiscardPile(this.discardPile);
@@ -259,27 +257,6 @@ class Poker {
   }
 
   /**
-   * Checks if a player has folded
-   * @param player The player number
-   */
-  public isOut(player: Number) {
-    //Checks if a player is playing in round by checking if they have a hand
-    return this.heldCards[+player].length === 0;
-  }
-
-  /**
-   * Checks if a player can make a bet
-   * @param player The Player betting
-   * @param bet The bet they want to make
-   */
-  public canBet(player: Number, bet?: Number) {
-    return (
-      this.heldCash[+player] >=
-      +(bet ? bet : this.currentBet) - +this.bets[+player]
-    );
-  }
-
-  /**
    * Initial bet to play a game of poker
    * @param player player to ante if null everyone antes
    */
@@ -291,16 +268,6 @@ class Poker {
       return;
     }
     this.makeBet(player, this.minBet);
-  }
-
-  /**
-   * Checks if a player can check
-   */
-  public canCheck() {
-    for (let bet of this.bets) {
-      if (bet) return false;
-    }
-    return true;
   }
 
   public allIn(player: Number) {
@@ -338,6 +305,79 @@ class Poker {
       this.updateBet(newBet);
       this.makeBet(player, +newBet - +this.bets[+player]);
     }
+  }
+
+  /**
+   * First turn in a round of play everyone antes to play if they can't they are out
+   */
+  public deal() {
+    let hands = [];
+    //set up players
+    for (let i = 0; i < this.numOfPlayers; i++) {
+      //Can ante? if can't they are out of the game
+      if (this.canBet(i, this.minBet)) {
+        this.ante(i);
+        let hand = [];
+        //Draw 5 cards
+        for (let j = 0; j < 5; j++) {
+          hand.push(this.draw());
+        }
+        hands.push(hand);
+      } else {
+        //Empty hand
+        hands.push([]);
+      }
+    }
+    this.stateFunctions.setHeldCards([...hands]);
+  }
+
+  /**
+   * A round where players that can play or haven't folded may call or raise bet
+   * @param bet Human players bet
+   */
+  public async bettingRound(bet: Number) {
+    //Round continues until all bets are equal and each player has had a turn to bet
+    while (this.turnCount < this.numOfPlayers) {
+      //Computer Players
+      if (this.getPlayerTurn()) {
+        //Simple logic for now computers will only call
+        await this.call(+this.getPlayerTurn());
+      }
+      //Human Player
+      else {
+        //Make player bet
+        this.makeBet(0, bet);
+      }
+      //Increment turn count
+      this.turnCount = +this.turnCount + 1;
+    }
+    //Reset values after round ends
+    this.turnCount = 0;
+    this.currentBet = this.minBet;
+    this.resetBets();
+  }
+
+  /**
+   * A round where players may discard cards to get different cards
+   * @param cardPos Cards player wants to discard
+   */
+  public async discardTurn(cardPos: Array<Number>) {
+    while (+this.turnCount < +this.numOfPlayers) {
+      //Computer Players
+      //Update later use badPokerCards for testing
+      if (this.getPlayerTurn()) {
+        await BadPokerCards().then((pos) =>
+          this.discardAndDraw(this.getPlayerTurn(), pos)
+        );
+      }
+      //Human
+      else {
+        await this.discardAndDraw(0, cardPos);
+      }
+      this.turnCount = +this.turnCount + 1;
+    }
+    this.turnCount = 0;
+    this.stateFunctions.setPlayerTurn(0);
   }
 }
 export default Poker;

@@ -1,42 +1,38 @@
-import { useEffect, useState } from "react";
-
+//React
+import { useState } from "react";
+//Components
 import Hand from "./Hand";
 import DeckArea from "./DeckArea";
 import PlayerInfo from "./PlayerInfo";
+//Functions
 import Poker from "../functions/Poker";
 
 function GameArea(props: any) {
-  const getMyBet = async (currentbet: Number, ammountBet: Number) => {
-    /**
-     * FIX JUST FOR TEST
-     */
-    return parseInt(
-      prompt(
-        "Please enter your bet:\nTo Call: $" +
-          (+currentbet - +ammountBet) +
-          "\n"
-      )
-    );
-  };
   ////////////////////////    States    ///////////////////////////////
   //The Deck
   const [deck, setDeck] = useState(null);
   //The Discard Pile
   const [discardPile, setDiscardPile] = useState(null);
-  //Round of play 1 indexed
-  let [turn, setTurn] = useState(1);
+  //Round of play 0 indexed
+  const [round, setRound] = useState(0);
   //Player turn in round 0 indexed
-  let [playerTurn, setPlayerTurn] = useState(0);
+  const [playerTurn, setPlayerTurn] = useState(0);
   //The size of the pot
-  let [pot, setPot] = useState(0);
+  const [pot, setPot] = useState(0);
   //Positions of cards to be kept
   const [holdList, setHoldList] = useState([true, true, true, true, true]);
   //Card design
   const [cardDesign, setCardDesign] = useState(0);
+  //Can bet
+  const [canBet, setCanBet] = useState(false);
+  //Can select cards to discard
+  const [canDiscard, setcanDiscard] = useState(false);
+  //can start a round
+  const [canStart, setCanStart] = useState(true);
   //The game
   const [pokerGame, setPokerGame] = useState(() => {
     return new Poker(props.minBet, props.startMoney, props.numOfPlayers, {
-      setTurn: setTurn,
+      setRound: setRound,
       setPlayerTurn: setPlayerTurn,
       setPot: setPot,
       setHoldList: setHoldList,
@@ -47,15 +43,59 @@ function GameArea(props: any) {
     });
   });
 
-  //Discards selected cards
-  const continueClickEvent = () => {
-    let pos = [];
-    for (let i = 0; i < +holdList.length; i++) {
-      if (!holdList[i]) pos.push(i);
+  const nextRound = () => {
+    setRound((+round + 1) % 5);
+    setCanBet(isBettingRound());
+    setcanDiscard(isDiscardRound());
+    setCanStart(isDrawRound());
+  };
+
+  const isDrawRound = () => {
+    return round === 0;
+  };
+
+  const isDiscardRound = () => {
+    return round === 2;
+  };
+
+  const isBettingRound = () => {
+    return round === 1 || round === 3;
+  };
+
+  const renderDiscardButton = (player: Number) => {
+    if (canDiscard) {
+      if (player) return;
+      return (
+        <div
+          className={"continueButton cardButton btn"}
+          onClick={() => discardClickEvent()}
+        >
+          Discard
+        </div>
+      );
     }
-    pokerGame.discardAndDraw(playerTurn, pos);
+  };
+
+  //Discards selected cards and starts discard and draw phase for computer players
+  const discardClickEvent = () => {
+    pokerGame.discardTurn(getHoldPositions());
+    setcanDiscard(false);
+  };
+
+  /**
+   * Gets a 0 based list of cards to discard
+   * @returns The pos of cards to be discarded
+   */
+  const getHoldPositions = () => {
+    let hp = [...holdList];
+    let discardList = [];
     setHoldList([true, true, true, true, true]);
-    console.log("Deck", deck.size(), "\nDiscard:", discardPile.size());
+    for (let i = 0; i < 5; i++) {
+      if (!hp[i]) {
+        discardList.push(i);
+      }
+    }
+    return discardList;
   };
 
   const renderPlayerInfo = (player: Number) => {
@@ -79,7 +119,8 @@ function GameArea(props: any) {
           mode={props.mode}
           holdList={holdList}
           setHoldList={setHoldList}
-          continueClickEvent={continueClickEvent}
+          renderDiscardButton={renderDiscardButton}
+          canDiscard={canDiscard}
           cardDesign={cardDesign}
         />
       );
@@ -89,19 +130,37 @@ function GameArea(props: any) {
   return (
     <div>
       <div id="playAreaContainer">
-        <button
-          onClick={() => {
-            pokerGame.makeBet(0, 200);
-          }}
-        >
-          Test Bet $200
+        <button onClick={() => setcanDiscard(!canDiscard)}>
+          canContinue:{canDiscard ? "T" : "F"}
+        </button>
+        <button onClick={() => setCanBet(!canBet)}>
+          canBet:{canBet ? "T" : "F"}
         </button>
         <button
           onClick={() => {
-            pokerGame.bettingRound(getMyBet);
+            pokerGame.discardAndDraw(0, getHoldPositions());
+            console.log(
+              "Deck sizes",
+              pokerGame.getDeckSize(),
+              pokerGame.getDiscardPileSize()
+            );
           }}
         >
-          Test Betting Round
+          test discard and draw phase
+        </button>
+        <button
+          onClick={() => {
+            pokerGame.discardTurn(getHoldPositions());
+          }}
+        >
+          test discard and draw on human
+        </button>
+        <button
+          onClick={() => {
+            pokerGame.bettingRound(500);
+          }}
+        >
+          Test Betting Round with $500 bet
         </button>
         <div id="designSelector"></div>
         <div id="playArea">
@@ -120,6 +179,7 @@ function GameArea(props: any) {
                 discardPile={discardPile}
                 cardDesign={cardDesign}
                 mode={props.mode}
+                pot={pot}
               />
             </div>
             <div id="centerPlayAreaBottom">

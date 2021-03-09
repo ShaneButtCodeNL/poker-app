@@ -37,13 +37,15 @@ export default function Card(props: any) {
   };
   function makeHold(player: Number) {
     if (+player === 0)
-      return (
+      return props.canDiscard ? (
         <div
           className="cardButton btn"
           onClick={() => holdClickEvent(props.cardPos)}
         >
           {hold ? "HOLD" : "DISCARD"}
         </div>
+      ) : (
+        <div></div>
       );
   }
 
@@ -77,8 +79,8 @@ export default function Card(props: any) {
 
   return (
     <div className="cardZone">
-      {renderCard()}
       {makeHold(props.player)}
+      {renderCard()}
     </div>
   );
 }

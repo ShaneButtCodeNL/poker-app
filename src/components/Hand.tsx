@@ -9,19 +9,6 @@ export default function Hand(props: any) {
     if (props.player === 0) return "playerOneHand";
   };
 
-  //Makes button for confirming discard
-  const continueButton = (player) => {
-    if (player) return;
-    return (
-      <div
-        className={"continueButton cardButton btn"}
-        onClick={() => props.continueClickEvent()}
-      >
-        Continue
-      </div>
-    );
-  };
-
   /**
    * Sets the hold list when you select a card to hold/discard
    * @param cardPos The position of the card to change
@@ -34,7 +21,7 @@ export default function Hand(props: any) {
 
   return (
     <div id={player()} className="vFlex centerFlexAlign maxHeight">
-      {continueButton(props.player)}
+      {props.renderDiscardButton(props.player)}
       <div
         className={
           "handZone maxHeight " +
@@ -51,6 +38,7 @@ export default function Hand(props: any) {
               updateHoldList={updateHoldList}
               mode={props.mode}
               cardDesign={props.cardDesign}
+              canDiscard={props.canDiscard}
             />
           );
         })}
