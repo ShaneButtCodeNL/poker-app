@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { renderFace, renderBack } from "../functions/RenderCardFace";
+import { Card as ACard } from "../functions/Deck";
 
 export default function Card(props: any) {
   const [hold, setHold] = useState(true);
@@ -18,7 +19,7 @@ export default function Card(props: any) {
     return orientation ? "horazontalCard" : "verticalCard";
   };
 
-  const getColor = (card) => {
+  const getColor = (card: ACard) => {
     return card.getSuit() % 2 === 0
       ? props.mode === 0
         ? "cardDarkBlack"
@@ -27,7 +28,7 @@ export default function Card(props: any) {
       ? "cardDarkRed"
       : "cardLightRed";
   };
-  const cardClass = (card) => {
+  const cardClass = (card: ACard) => {
     return (
       (props.mode === 0 ? "cardDark " : "cardLight ") +
       getColor(card) +

@@ -31,9 +31,24 @@ export default function DeckArea(props: any) {
       <div id="deckPile" className="deckPosition">
         {renderDeck()}
       </div>
-      <div id="potInfo">
-        POT:
-        <br />${props.pot}
+      <div>
+        {props.canStart ? (
+          <div
+            id="canStartBtn"
+            className="btn cardButton"
+            onClick={() => {
+              props.deal();
+              props.setCanStart(false);
+            }}
+          >
+            Draw
+          </div>
+        ) : (
+          <div id="potInfo">
+            POT:
+            <br />${props.pot}
+          </div>
+        )}
       </div>
       <div id="discardPile" className="deckPosition">
         {renderDiscard()}

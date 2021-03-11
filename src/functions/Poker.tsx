@@ -41,9 +41,8 @@ class Poker {
   ) {
     this.stateFunctions = stateFunctions;
     this.pot = 0;
-    this.round = 1;
+    this.round = 0;
     this.turnCount = 0;
-    this.round = 1;
     this.bets = [];
     this.stateFunctions.setPot(this.pot);
     this.minBet = +minBet;
@@ -61,17 +60,9 @@ class Poker {
     for (let i = 0; i < this.numOfPlayers; i++) {
       //Gives Player cash
       this.heldCash.push(startCash);
-      //initialize bets
       this.bets.push(0);
-      //Draw 5 cards for player
-      let hand = [];
-      for (let j = 0; j < 5; j++) {
-        hand.push(this.deck.draw());
-      }
-      this.heldCards.push(hand);
     }
     this.stateFunctions.setHeldCash([...this.heldCash]);
-    this.stateFunctions.setHeldCards(this.heldCards);
     stateFunctions.setDeck(this.deck);
     stateFunctions.setDiscardPile(this.discardPile);
     stateFunctions.setRound(this.round);
@@ -310,7 +301,8 @@ class Poker {
   /**
    * First turn in a round of play everyone antes to play if they can't they are out
    */
-  public deal() {
+  public async deal() {
+    console.log("Start deal");
     let hands = [];
     //set up players
     for (let i = 0; i < this.numOfPlayers; i++) {
@@ -320,7 +312,10 @@ class Poker {
         let hand = [];
         //Draw 5 cards
         for (let j = 0; j < 5; j++) {
-          hand.push(this.draw());
+          await this.draw().then((card) => {
+            hand.push(card);
+          });
+          console.log(hand[j].toString());
         }
         hands.push(hand);
       } else {
@@ -328,7 +323,9 @@ class Poker {
         hands.push([]);
       }
     }
+    this.heldCards = [...hands];
     this.stateFunctions.setHeldCards([...hands]);
+    //return [...hands];
   }
 
   /**

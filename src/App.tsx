@@ -23,11 +23,6 @@ function App() {
   //The visual style of the app for now just light and dark
   let [mode, setMode] = useState(0);
   //
-  //The amount of cash held by each player
-  let [heldCash, setHeldCash] = useState([]);
-  //
-  //The hands of cards each player has
-  let [heldCards, setHeldCards] = useState([]);
 
   let appClass = "App " + (mode ? "lightMode" : "darkMode");
   return (
@@ -40,10 +35,6 @@ function App() {
               startMoney={startMoney}
               minBet={minBet}
               numOfPlayers={numOfPlayers}
-              setHeldCards={setHeldCards}
-              heldCards={heldCards}
-              setHeldCash={setHeldCash}
-              heldCash={heldCash}
               mode={mode}
             />
           </Route>

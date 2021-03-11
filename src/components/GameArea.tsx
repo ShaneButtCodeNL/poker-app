@@ -1,5 +1,5 @@
 //React
-import { useState } from "react";
+import { useEffect, useState } from "react";
 //Components
 import Hand from "./Hand";
 import DeckArea from "./DeckArea";
@@ -13,6 +13,10 @@ function GameArea(props: any) {
   const [deck, setDeck] = useState(null);
   //The Discard Pile
   const [discardPile, setDiscardPile] = useState(null);
+  //The amount of cash held by each player
+  const [heldCash, setHeldCash] = useState([]);
+  //The hands of cards each player has
+  const [heldCards, setHeldCards] = useState([]);
   //Round of play 0 indexed
   const [round, setRound] = useState(0);
   //Player turn in round 0 indexed
@@ -36,18 +40,23 @@ function GameArea(props: any) {
       setPlayerTurn: setPlayerTurn,
       setPot: setPot,
       setHoldList: setHoldList,
-      setHeldCards: props.setHeldCards,
-      setHeldCash: props.setHeldCash,
+      setHeldCards: setHeldCards,
+      setHeldCash: setHeldCash,
       setDeck: setDeck,
       setDiscardPile: setDiscardPile,
     });
   });
 
-  const nextRound = () => {
-    setRound((+round + 1) % 5);
+  //Updates round
+  useEffect(() => {
     setCanBet(isBettingRound());
-    setcanDiscard(isDiscardRound());
     setCanStart(isDrawRound());
+    setcanDiscard(isDiscardRound());
+  }, [round]);
+
+  const deal = async () => {
+    await pokerGame.deal();
+    setRound(1);
   };
 
   const isDrawRound = () => {
@@ -79,7 +88,8 @@ function GameArea(props: any) {
   //Discards selected cards and starts discard and draw phase for computer players
   const discardClickEvent = () => {
     pokerGame.discardTurn(getHoldPositions());
-    setcanDiscard(false);
+    const r = round + 1;
+    setRound(r);
   };
 
   /**
@@ -100,22 +110,20 @@ function GameArea(props: any) {
 
   const renderPlayerInfo = (player: Number) => {
     if (props.numOfPlayers >= +player) {
-      return (
-        <PlayerInfo player={+player} heldCash={props.heldCash[+player - 1]} />
-      );
+      return <PlayerInfo player={+player} heldCash={heldCash[+player - 1]} />;
     }
   };
 
   //Render hand if player count is high enough
   const renderHand = (playerNumber: Number) => {
     if (playerNumber <= props.numOfPlayers) {
-      if (!props.heldCards[+playerNumber - 1]) {
+      if (!heldCards[+playerNumber - 1]) {
         return <div>Failed</div>;
       }
       return (
         <Hand
           player={+playerNumber - 1}
-          hand={props.heldCards[+playerNumber - 1]}
+          hand={heldCards[+playerNumber - 1]}
           mode={props.mode}
           holdList={holdList}
           setHoldList={setHoldList}
@@ -180,6 +188,9 @@ function GameArea(props: any) {
                 cardDesign={cardDesign}
                 mode={props.mode}
                 pot={pot}
+                canStart={canStart}
+                deal={deal}
+                setCanStart={setCanStart}
               />
             </div>
             <div id="centerPlayAreaBottom">
