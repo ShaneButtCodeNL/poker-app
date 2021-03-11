@@ -73,8 +73,12 @@ class Poker {
    * @returns All players that are playing bets are equal
    */
   public checkBets() {
+    console.log("Starting checkBets");
     //Just getting an ammount betted useing main players bet
     let betAmmount = this.bets[0];
+    for (let bet of this.bets) {
+      console.log(bet);
+    }
     //For each player
     for (let i = 0; i < this.numOfPlayers; i++) {
       //If player is playing
@@ -135,14 +139,18 @@ class Poker {
     return this.discardPile.size();
   }
 
+  //Gets the current amount needed to bet
+  public getCurrentBet(player: number) {
+    return +this.bets[0] === +this.minBet
+      ? this.minBet
+      : +this.currentBet - +this.bets[player];
+  }
+
   /**
    * Reset states for new round of play
    */
   public reset() {
-    //Resets turn counter
-    this.turnCount = 0;
-    //Resets current min bet
-    this.currentBet = this.minBet;
+    this.resetBets();
     //Resets hands
     let hands = [...this.heldCards];
     for (let hand of hands) {
@@ -151,14 +159,14 @@ class Poker {
       }
     }
     hands = [];
-    //resets made bets
-    for (let i = 0; i < this.bets.length; i++) {
-      this.bets[i] = 0;
-    }
     this.stateFunctions.setHeldCards([]);
   }
 
-  private resetBets() {
+  public resetBets() {
+    //Resets turn counter
+    this.turnCount = 0;
+    //Resets current min bet
+    this.currentBet = this.minBet;
     for (let i = 0; i < this.bets.length; i++) {
       this.bets[i] = 0;
     }
@@ -221,7 +229,7 @@ class Poker {
    */
   public async makeBet(player: Number, bet: Number) {
     //Bet is high enough
-    if (+bet + +this.bets[+player] >= this.currentBet) {
+    if (+bet >= +this.getCurrentBet(+player)) {
       //Has money for bet
       if (this.heldCash[+player] >= +bet) {
         //Update current bet
@@ -238,7 +246,9 @@ class Poker {
         //Updates pot
         this.stateFunctions.setPot(this.pot);
         //Updates current bet
-        this.bets[+player] = +this.bets[+player] + +bet;
+        const newBets = [...this.bets];
+        newBets[+player] = +this.currentBet;
+        this.bets = [...newBets];
       }
     }
     /************************** 
@@ -275,7 +285,8 @@ class Poker {
    * @param player The player making a bet
    */
   public async call(player: Number) {
-    if (this.canBet(+player)) this.makeBet(+player, this.currentBet);
+    if (this.canBet(+player))
+      this.makeBet(+player, this.getCurrentBet(+player));
   }
 
   /**
@@ -343,15 +354,12 @@ class Poker {
       //Human Player
       else {
         //Make player bet
-        this.makeBet(0, bet);
+        await this.makeBet(0, bet);
       }
       //Increment turn count
       this.turnCount = +this.turnCount + 1;
     }
-    //Reset values after round ends
     this.turnCount = 0;
-    this.currentBet = this.minBet;
-    this.resetBets();
   }
 
   /**

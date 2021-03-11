@@ -41,7 +41,7 @@ export default function DeckArea(props: any) {
               props.setCanStart(false);
             }}
           >
-            Draw
+            Ante: ${props.ante}
           </div>
         ) : (
           <div id="potInfo">

@@ -8,10 +8,10 @@ export default function PlayerBet(props: any) {
       <br />
       <button
         onClick={() => {
-          props.pokerGame.call(0);
+          props.bet(props.callBet);
         }}
       >
-        CALL
+        ${props.callBet} TO CALL
       </button>
       <br />
       <input
@@ -21,7 +21,7 @@ export default function PlayerBet(props: any) {
       ></input>
       <button
         onClick={() => {
-          props.pokerGame.raise(0, +raiseRef.current.value);
+          props.bet(raiseRef.current.value);
         }}
       >
         Raise

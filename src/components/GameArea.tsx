@@ -6,6 +6,7 @@ import DeckArea from "./DeckArea";
 import PlayerInfo from "./PlayerInfo";
 //Functions
 import Poker from "../functions/Poker";
+import PlayerBet from "./PlayerBet";
 
 function GameArea(props: any) {
   ////////////////////////    States    ///////////////////////////////
@@ -108,6 +109,24 @@ function GameArea(props: any) {
     return discardList;
   };
 
+  const renderBettingWindow = () => {
+    if (canBet) {
+      return (
+        <PlayerBet
+          bet={async (betAmmount: Number) => {
+            await pokerGame.bettingRound(betAmmount);
+            if (pokerGame.checkBets()) {
+              let r = round + 1;
+              setRound(r);
+              pokerGame.resetBets();
+            }
+          }}
+          callBet={pokerGame.getCurrentBet(0)}
+        />
+      );
+    }
+  };
+
   const renderPlayerInfo = (player: Number) => {
     if (props.numOfPlayers >= +player) {
       return <PlayerInfo player={+player} heldCash={heldCash[+player - 1]} />;
@@ -188,12 +207,14 @@ function GameArea(props: any) {
                 cardDesign={cardDesign}
                 mode={props.mode}
                 pot={pot}
+                ante={props.minBet}
                 canStart={canStart}
                 deal={deal}
                 setCanStart={setCanStart}
               />
             </div>
             <div id="centerPlayAreaBottom">
+              {renderBettingWindow()}
               {renderPlayerInfo(1)}
               {renderHand(1)}
             </div>
