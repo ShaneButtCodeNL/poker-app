@@ -1,4 +1,4 @@
-import { Card, Deck } from "./Deck";
+import { Card, Deck, Suits, Values } from "./Deck";
 import { BadPokerCards } from "./BadPokerLogic";
 
 class Poker {
@@ -383,6 +383,214 @@ class Poker {
     }
     this.turnCount = 0;
     this.stateFunctions.setPlayerTurn(0);
+  }
+
+  /********************************************************************************
+   * Victory conditions
+   ********************************************************************************/
+
+  //Helper function
+  private formatNumber(num: Number) {
+    if (num < 10) return "0" + num;
+    return "" + num;
+  }
+
+  /**
+   * Makes a map from a five card hand
+   * @param hand A 5 card Array
+   * @returns The map of values
+   */
+  private makeValueMap(hand: Array<Card>) {
+    const map = new Map();
+    for (let card of hand) {
+      let value = card.getValue();
+      map.set(value, map.has(value) ? map.get(value) + 1 : 1);
+    }
+    return map;
+  }
+
+  /**
+   * Gets a score for the hand that helps in breaking ties score is based on hand then on high cards.
+   * @param hand An array of five cards
+   * @returns The score of the hand
+   */
+  private getHandScore(hand: Array<Card>) {
+    let score: Array<String> = [];
+    hand.forEach((card) => {
+      if (card.getValue() === Values.Ace) {
+        score.push(this.formatNumber(14));
+      } else {
+        score.push(this.formatNumber(card.getValue()));
+      }
+    });
+    score.sort((a, b) => {
+      return +b - +a;
+    });
+    if (this.checkRoyalFlush(hand)) score.unshift("9");
+    else if (this.checkStraightFlush(hand)) score.unshift("8");
+    else if (this.checkFourKind(hand)) score.unshift("7");
+    else if (this.checkFullHouse(hand)) score.unshift("6");
+    else if (this.handIsFlush(hand)) score.unshift("5");
+    else if (this.checkStraight(hand)) score.unshift("4");
+    else if (this.checkThreeKind(hand)) score.unshift("3");
+    else if (this.checkTwoPair(hand)) score.unshift("2");
+    else if (this.checkPair(hand)) score.unshift("1");
+
+    return parseInt(score.join(""));
+  }
+
+  /**
+   * Checks if a five card hand is a flush. Each card is the same suit.
+   * @param hand The five card hand we are checking
+   * @returns If hand is a flush
+   */
+  private handIsFlush(hand: Array<Card>) {
+    let suit = hand[0].getSuit();
+    for (let card of hand) {
+      if (card.getSuit() !== suit) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Checks if a 5 card hand is a royal flush Ace,10,jack,queen, and king
+   * @param hand The 5 card hand to be checked
+   * @returns If this hand contains a royal flush
+   */
+  private checkRoyalFlush(hand: Array<Card>) {
+    //Check for flush
+    if (!this.handIsFlush(hand)) return false;
+    let handSet = new Set();
+    for (let card of hand) {
+      handSet.add(card.getValue());
+    }
+    const royalFlush = [
+      Values.King,
+      Values.Queen,
+      Values.Jack,
+      Values.Ten,
+      Values.Ace,
+    ];
+    for (let value of royalFlush) {
+      if (!handSet.has(value)) return false;
+    }
+    return true;
+  }
+
+  /**
+   * Checks if a hand contains a straight, A set of cards where values increase by one.Note a royal flushes and straight flushes are straights.
+   * @param hand An array of 5 cards
+   * @returns Is this a straight
+   */
+  private checkStraight(hand: Array<Card>) {
+    let handCopy = [...hand].sort((a, b) => {
+      return a.compareValue(b);
+    });
+    //Lowest value in hand
+    const offset = handCopy[0].getValue();
+    for (let i = offset; i < offset + 5; i++) {
+      //i - offset will give position
+      if (i !== handCopy[i - offset].getValue()) return false;
+    }
+    return true;
+  }
+
+  /**
+   * Check if a five card hand is a straight flush. A set of cards where values increase by one and all the same suit. Note a royal flush is a straight flush.
+   * @param hand The five card hand to be checked
+   * @returns If hand is a straight flush
+   */
+  private checkStraightFlush(hand: Array<Card>) {
+    return this.handIsFlush(hand) && this.checkStraight(hand);
+  }
+
+  /**
+   * Checks to see if a hand has four of a kind, four of the five cards have same value
+   * @param hand The 5 card hand to be checked
+   * @returns  Is this hand a four of a kind
+   */
+  private checkFourKind(hand: Array<Card>) {
+    const map = this.makeValueMap(hand);
+    map.forEach((value) => {
+      //If a key has a value of 4 then bingo
+      if (value === 4) return true;
+    });
+    return false;
+  }
+
+  /**
+   * Checks if hand has a three of a kind
+   * @param hand An array of 5 cards
+   * @returns does this hand contain a three of a kind
+   */
+  private checkThreeKind(hand: Array<Card>) {
+    const map = this.makeValueMap(hand);
+    map.forEach((value) => {
+      //If a key has a value of 3 then bingo
+      if (value === 3) return true;
+    });
+    return false;
+  }
+
+  /**
+   * Checks if a hand has a pair of values
+   * @param hand An array of five cards
+   * @returns Does this hand have a pair of values
+   */
+  private checkPair(hand: Array<Card>) {
+    const map = this.makeValueMap(hand);
+    map.forEach((value) => {
+      //If a key has a value of 2 bingo
+      if (value === 2) return true;
+    });
+    return false;
+  }
+
+  /**
+   * Checks if a hand has two pairs of values
+   * @param hand An array of five cards
+   * @returns Does this hand contain 2 pairs
+   */
+  private checkTwoPair(hand: Array<Card>) {
+    const map = this.makeValueMap(hand);
+    //Flag for finding a pair
+    let foundAPair = false;
+    map.forEach((value) => {
+      if (value === 2) {
+        if (foundAPair) return true;
+        foundAPair = true;
+      }
+    });
+    return false;
+  }
+
+  /**
+   * Checks if a hand has a fullhouse
+   * @param hand An array of 5 cards
+   * @returns Does hand contain a fullhouse
+   */
+  private checkFullHouse(hand: Array<Card>) {
+    const map = this.makeValueMap(hand);
+    //Flags for finding a pair or triple
+    let foundPair = false;
+    let foundTriple = false;
+    map.forEach((value) => {
+      //Found three of a kind
+      if (value === 3) {
+        //Already found pair
+        if (foundPair) return true;
+        foundTriple = true;
+      }
+      //Found Pair
+      if (value === 2) {
+        //Already Found Triple
+        if (foundTriple) return true;
+        foundPair = true;
+      }
+    });
+    return false;
   }
 }
 export default Poker;
