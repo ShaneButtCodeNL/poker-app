@@ -189,6 +189,7 @@ function GameArea(props: any) {
         >
           Test Betting Round with $500 bet
         </button>
+        <button onClick={() => pokerGame.Test()}>Test hand combos</button>
         <div id="designSelector"></div>
         <div id="playArea">
           <div id="leftPlayArea">

@@ -446,12 +446,13 @@ class Poker {
    */
   private handIsFlush(hand: Array<Card>) {
     let suit = hand[0].getSuit();
+    let flag = true;
     for (let card of hand) {
       if (card.getSuit() !== suit) {
-        return false;
+        flag = false;
       }
     }
-    return true;
+    return flag;
   }
 
   /**
@@ -463,6 +464,7 @@ class Poker {
     //Check for flush
     if (!this.handIsFlush(hand)) return false;
     let handSet = new Set();
+    let flag = true;
     for (let card of hand) {
       handSet.add(card.getValue());
     }
@@ -474,9 +476,9 @@ class Poker {
       Values.Ace,
     ];
     for (let value of royalFlush) {
-      if (!handSet.has(value)) return false;
+      if (!handSet.has(value)) flag = false;
     }
-    return true;
+    return flag;
   }
 
   /**
@@ -488,13 +490,26 @@ class Poker {
     let handCopy = [...hand].sort((a, b) => {
       return a.compareValue(b);
     });
+    let flag = true;
     //Lowest value in hand
-    const offset = handCopy[0].getValue();
-    for (let i = offset; i < offset + 5; i++) {
-      //i - offset will give position
-      if (i !== handCopy[i - offset].getValue()) return false;
+    let offset = handCopy[0].getValue();
+    //Number of cards to check
+    let num = 5;
+    //Since ace can be high or low they need an edge case
+    if (offset === Values.Ace) {
+      offset = handCopy[1].getValue();
+      //Ace will be low 2,3,4,5 Ace will be high 10,j,q,k
+      if (offset === Values.Two || offset === Values.Ten) {
+        num = 4;
+      }
+      //Can't be straight
+      else return false;
     }
-    return true;
+    for (let i = offset; i < offset + num; i++) {
+      //i - offset +(5-num) will give position
+      if (i !== handCopy[i - offset + (5 - num)].getValue()) flag = false;
+    }
+    return flag;
   }
 
   /**
@@ -513,11 +528,12 @@ class Poker {
    */
   private checkFourKind(hand: Array<Card>) {
     const map = this.makeValueMap(hand);
+    let flag = false;
     map.forEach((value) => {
       //If a key has a value of 4 then bingo
-      if (value === 4) return true;
+      if (value === 4) flag = true;
     });
-    return false;
+    return flag;
   }
 
   /**
@@ -527,11 +543,12 @@ class Poker {
    */
   private checkThreeKind(hand: Array<Card>) {
     const map = this.makeValueMap(hand);
+    let flag = false;
     map.forEach((value) => {
       //If a key has a value of 3 then bingo
-      if (value === 3) return true;
+      if (value === 3) flag = true;
     });
-    return false;
+    return flag;
   }
 
   /**
@@ -541,11 +558,14 @@ class Poker {
    */
   private checkPair(hand: Array<Card>) {
     const map = this.makeValueMap(hand);
+    let flag = false;
     map.forEach((value) => {
       //If a key has a value of 2 bingo
-      if (value === 2) return true;
+      if (value === 2) {
+        return (flag = true);
+      }
     });
-    return false;
+    return flag;
   }
 
   /**
@@ -555,15 +575,16 @@ class Poker {
    */
   private checkTwoPair(hand: Array<Card>) {
     const map = this.makeValueMap(hand);
+    let flag = false;
     //Flag for finding a pair
     let foundAPair = false;
     map.forEach((value) => {
       if (value === 2) {
-        if (foundAPair) return true;
+        if (foundAPair) flag = true;
         foundAPair = true;
       }
     });
-    return false;
+    return flag;
   }
 
   /**
@@ -573,6 +594,7 @@ class Poker {
    */
   private checkFullHouse(hand: Array<Card>) {
     const map = this.makeValueMap(hand);
+    let flag = false;
     //Flags for finding a pair or triple
     let foundPair = false;
     let foundTriple = false;
@@ -580,17 +602,130 @@ class Poker {
       //Found three of a kind
       if (value === 3) {
         //Already found pair
-        if (foundPair) return true;
+        if (foundPair) flag = true;
         foundTriple = true;
       }
       //Found Pair
       if (value === 2) {
         //Already Found Triple
-        if (foundTriple) return true;
+        if (foundTriple) flag = true;
         foundPair = true;
       }
     });
-    return false;
+    return flag;
+  }
+
+  //Testing erase later
+  public Test() {
+    const royalFlush = [
+      new Card(Suits.Clubs, Values.Ace),
+      new Card(Suits.Clubs, Values.King),
+      new Card(Suits.Clubs, Values.Queen),
+      new Card(Suits.Clubs, Values.Jack),
+      new Card(Suits.Clubs, Values.Ten),
+    ];
+    const notRoyalFlushA = [
+      new Card(Suits.Clubs, Values.Ace),
+      new Card(Suits.Hearts, Values.King),
+      new Card(Suits.Clubs, Values.Queen),
+      new Card(Suits.Clubs, Values.Jack),
+      new Card(Suits.Clubs, Values.Ten),
+    ];
+    const notRoyalFlushB = [
+      new Card(Suits.Clubs, Values.Ace),
+      new Card(Suits.Clubs, Values.King),
+      new Card(Suits.Clubs, Values.Queen),
+      new Card(Suits.Clubs, Values.Jack),
+      new Card(Suits.Spades, Values.Ten),
+    ];
+
+    const FlushA = [
+      new Card(Suits.Clubs, Values.Ace),
+      new Card(Suits.Clubs, Values.King),
+      new Card(Suits.Clubs, Values.Two),
+      new Card(Suits.Clubs, Values.Five),
+      new Card(Suits.Clubs, Values.Ten),
+    ];
+
+    const FlushB = [
+      new Card(Suits.Hearts, Values.Ace),
+      new Card(Suits.Hearts, Values.King),
+      new Card(Suits.Hearts, Values.Queen),
+      new Card(Suits.Hearts, Values.Jack),
+      new Card(Suits.Hearts, Values.Ten),
+    ];
+
+    const fullHouse = [
+      new Card(Suits.Clubs, Values.Five),
+      new Card(Suits.Spades, Values.Ace),
+      new Card(Suits.Hearts, Values.Five),
+      new Card(Suits.Diamonds, Values.Five),
+      new Card(Suits.Clubs, Values.Ace),
+    ];
+
+    const twoPair = [
+      new Card(Suits.Clubs, Values.Ace),
+      new Card(Suits.Spades, Values.Ace),
+      new Card(Suits.Hearts, Values.Five),
+      new Card(Suits.Diamonds, Values.Five),
+      new Card(Suits.Clubs, Values.Ten),
+    ];
+
+    const fourKind = [
+      new Card(Suits.Clubs, Values.Five),
+      new Card(Suits.Spades, Values.Five),
+      new Card(Suits.Hearts, Values.Five),
+      new Card(Suits.Diamonds, Values.Five),
+      new Card(Suits.Clubs, Values.Ten),
+    ];
+
+    const threeKind = [
+      new Card(Suits.Clubs, Values.Five),
+      new Card(Suits.Spades, Values.Ace),
+      new Card(Suits.Hearts, Values.Five),
+      new Card(Suits.Diamonds, Values.Five),
+      new Card(Suits.Clubs, Values.Ten),
+    ];
+
+    const pair = [
+      new Card(Suits.Clubs, Values.Ace),
+      new Card(Suits.Spades, Values.Queen),
+      new Card(Suits.Hearts, Values.Six),
+      new Card(Suits.Diamonds, Values.Five),
+      new Card(Suits.Clubs, Values.Queen),
+    ];
+
+    const output = (hand: Array<Card>) => {
+      const out = (s: any) => {
+        console.log(...s);
+      };
+      out(["Hand"]);
+      hand.forEach((card) => {
+        out([card.toString()]);
+      });
+      out(["FL", this.handIsFlush(hand)]);
+      out(["RF", this.checkRoyalFlush(hand)]);
+      out(["SF", this.checkStraightFlush(hand)]);
+      out(["4K", this.checkFourKind(hand)]);
+      out(["FH", this.checkFullHouse(hand)]);
+      out(["ST", this.checkStraight(hand)]);
+      out(["3K", this.checkThreeKind(hand)]);
+      out(["TP", this.checkTwoPair(hand)]);
+      out(["PR", this.checkPair(hand)]);
+      out(["Score", this.getHandScore(hand)]);
+      out(["END"]);
+    };
+
+    output(royalFlush);
+    output(notRoyalFlushA);
+    output(notRoyalFlushB);
+    output(FlushA);
+    output(FlushB);
+    output(twoPair);
+    output(threeKind);
+    output(fourKind);
+    output(fullHouse);
+    output(pair);
   }
 }
 export default Poker;
