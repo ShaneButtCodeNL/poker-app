@@ -53,6 +53,11 @@ function GameArea(props: any) {
     setCanBet(isBettingRound());
     setCanStart(isDrawRound());
     setcanDiscard(isDiscardRound());
+    if (isPayoutRound()) {
+      setRound(0);
+      pokerGame.payout(pokerGame.getWinners());
+      alert(pokerGame.getGameResultString());
+    }
   }, [round]);
 
   const deal = async () => {
@@ -70,6 +75,10 @@ function GameArea(props: any) {
 
   const isBettingRound = () => {
     return round === 1 || round === 3;
+  };
+
+  const isPayoutRound = () => {
+    return round === 4;
   };
 
   const renderDiscardButton = (player: Number) => {

@@ -1,5 +1,6 @@
 import { Card, Deck, Suits, Values } from "./Deck";
 import { BadPokerCards } from "./BadPokerLogic";
+import { walkUpBindingElementsAndPatterns } from "typescript";
 
 class Poker {
   //The minimum amount allowed for a bet
@@ -412,9 +413,10 @@ class Poker {
   /**
    * Gets a score for the hand that helps in breaking ties score is based on hand then on high cards.
    * @param hand An array of five cards
-   * @returns The score of the hand
+   * @returns The score of the hand returns 0 if no hand
    */
   private getHandScore(hand: Array<Card>) {
+    if (hand.length === 0) return 0;
     let score: Array<String> = [];
     hand.forEach((card) => {
       if (card.getValue() === Values.Ace) {
@@ -613,6 +615,129 @@ class Poker {
       }
     });
     return flag;
+  }
+
+  private getHandString(hand: Array<Card>) {
+    let handCopy = [...hand].sort((a, b) => {
+      return a.compareValue(b);
+    });
+    let s = "";
+    handCopy.forEach((card) => {
+      s = s + " " + card.toString();
+    });
+    return s;
+  }
+
+  /**
+   * Gets a string saying what a players hand is and what they have
+   * @param playerName The name of the player
+   * @param hand A 5 card array of players hand
+   * @returns A string of their resulting hand
+   */
+  private getHandResultString(playerName: String, hand: Array<Card>) {
+    let result = this.getHandString(hand) + "\n" + playerName + " has ";
+    const append = (s: string) => {
+      result = result + s;
+      return result;
+    };
+    //Royal Flush
+    if (this.checkRoyalFlush(hand))
+      return append("a Royal Flush of " + Suits[hand[0].getSuit()]);
+    //Straight Flush
+    if (this.checkStraightFlush(hand))
+      return append("a Straight Flush of " + Suits[hand[0].getSuit()]);
+    //Four of a kind
+    if (this.checkFourKind(hand)) return append(" a Four Of A Kind");
+    //FullHouse
+    if (this.checkFullHouse(hand)) return append("a Full House");
+    //Flush
+    if (this.handIsFlush(hand)) return append("a Flush");
+    //Straight
+    if (this.checkStraight(hand)) return append("a Straight");
+    //Three of a kind
+    if (this.checkThreeKind(hand)) return append("a Three Of A Kind");
+    //Two Pair
+    if (this.checkTwoPair(hand)) return append("a set of Two Pairs");
+    //Pair
+    if (this.checkPair(hand)) return append("a Pair");
+    return append("A High Card");
+  }
+
+  /**
+   * Gets a string that will describe the end results of of a poker game
+   * @returns A string representation of the game results
+   */
+  public getGameResultString() {
+    let result = "";
+    const append = (s: string) => {
+      result = result + s;
+      return result;
+    };
+    for (let i = 0; i < this.numOfPlayers; i++) {
+      let hand = this.heldCards[i];
+      //Player folded or is out
+      if (hand.length === 0) {
+        append("Player " + i + " is out!");
+      } else {
+        append(this.getHandResultString("Player " + i, hand) + "\n");
+      }
+      const winners = this.getWinners();
+      //a single winner
+      if (winners.length === 1) {
+        return append("the winner is Player " + winners[0]);
+      }
+      append("A tie between:\n");
+      winners.forEach((player) => {
+        append("Player " + player + " ");
+      });
+      return result;
+    }
+  }
+
+  /**
+   * Gets the resulting hand scores of all players hands
+   * @returns An array containing the hand scores for all players
+   */
+  public getResults() {
+    const results = [];
+    this.heldCards.forEach((hand) => {
+      results.push(this.getHandScore(hand));
+    });
+    return results;
+  }
+
+  /**
+   * Makes an arraay of winners if there is a tie they will both be in the array if array has only one element there is a single winner
+   * @returns An array containg winners
+   */
+  public getWinners() {
+    const results = this.getResults();
+    let winners = [0];
+    for (let i = 1; i < this.numOfPlayers; i++) {
+      if (results[i] > results[winners[0]]) {
+        winners = [i];
+      } else if (results[i] === results[winners[0]]) {
+        winners.push(i);
+      }
+    }
+    return winners;
+  }
+
+  /**
+   * Will split pot between players with ammounts under a dollar given to house. will also reset pot and update heldcash.
+   * @param winners an array of players to split pot
+   */
+  public payout(winners: Array<Number>) {
+    const heldCashCopy = [...this.heldCash];
+    const num = winners.length;
+    const payout = Math.floor(+this.pot / +num);
+    winners.forEach((player) => {
+      heldCashCopy[+player] = +heldCashCopy[+player] + payout;
+    });
+    this.heldCash = [...heldCashCopy];
+    this.stateFunctions.setHeldCash([...heldCashCopy]);
+    this.pot = 0;
+    this.stateFunctions.setPot(0);
   }
 
   //Testing erase later
