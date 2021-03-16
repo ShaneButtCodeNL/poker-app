@@ -1,6 +1,5 @@
 import { Card, Deck, Suits, Values } from "./Deck";
 import { BadPokerCards } from "./BadPokerLogic";
-import { walkUpBindingElementsAndPatterns } from "typescript";
 
 class Poker {
   //The minimum amount allowed for a bet
@@ -159,7 +158,7 @@ class Poker {
         this.discardPile.addToTop(card);
       }
     }
-    hands = [];
+    this.heldCards = [];
     this.stateFunctions.setHeldCards([]);
   }
 
@@ -392,7 +391,11 @@ class Poker {
 
   //Helper function
   private formatNumber(num: Number) {
+    //Ace
+    if (num === 1) return "14";
+    //Nums 2,3,4,5,6,7,8,9 become 02,03,04,05,06,07,08,09
     if (num < 10) return "0" + num;
+    //10 jack queen and king are fine
     return "" + num;
   }
 
@@ -419,24 +422,61 @@ class Poker {
     if (hand.length === 0) return 0;
     let score: Array<String> = [];
     hand.forEach((card) => {
-      if (card.getValue() === Values.Ace) {
-        score.push(this.formatNumber(14));
-      } else {
-        score.push(this.formatNumber(card.getValue()));
-      }
+      score.push(this.formatNumber(card.getValue()));
     });
     score.sort((a, b) => {
       return +b - +a;
     });
-    if (this.checkRoyalFlush(hand)) score.unshift("9");
-    else if (this.checkStraightFlush(hand)) score.unshift("8");
-    else if (this.checkFourKind(hand)) score.unshift("7");
-    else if (this.checkFullHouse(hand)) score.unshift("6");
-    else if (this.handIsFlush(hand)) score.unshift("5");
-    else if (this.checkStraight(hand)) score.unshift("4");
-    else if (this.checkThreeKind(hand)) score.unshift("3");
-    else if (this.checkTwoPair(hand)) score.unshift("2");
-    else if (this.checkPair(hand)) score.unshift("1");
+    if (this.checkRoyalFlush(hand)) score.unshift("90000");
+    else if (this.checkStraightFlush(hand)) score.unshift("80000");
+    else if (this.checkFourKind(hand)) {
+      //get value of four kind
+      let map = this.makeValueMap(hand);
+      let value;
+      map.forEach((v, k) => {
+        if (v === 4) value = this.formatNumber(k);
+      });
+      score.unshift("700" + value);
+    } else if (this.checkFullHouse(hand)) {
+      let map = this.makeValueMap(hand);
+      //The three of a kind
+      let triple;
+      //The pair
+      let double;
+      map.forEach((v, k) => {
+        if (v === 3) triple = this.formatNumber(k);
+        if (v === 2) double = this.formatNumber(k);
+      });
+      score.unshift("6" + triple + double);
+    } else if (this.handIsFlush(hand)) score.unshift("50000");
+    else if (this.checkStraight(hand)) score.unshift("40000");
+    else if (this.checkThreeKind(hand)) {
+      let triple;
+      this.makeValueMap(hand).forEach((v, k) => {
+        if (v === 3) triple = this.formatNumber(k);
+      });
+      score.unshift("300" + triple);
+    } else if (this.checkTwoPair(hand)) {
+      let pair1;
+      let pair2;
+      this.makeValueMap(hand).forEach((v, k) => {
+        if (v === 2) {
+          pair2 = pair1;
+          pair1 = k;
+        }
+      });
+      pair1 >= pair2
+        ? score.unshift(
+            "2" + this.formatNumber(pair1) + this.formatNumber(pair2)
+          )
+        : score.unshift(
+            "2" + this.formatNumber(pair2) + this.formatNumber(pair1)
+          );
+    } else if (this.checkPair(hand)) {
+      this.makeValueMap(hand).forEach((v, k) => {
+        if (v === 2) return score.unshift("200" + this.formatNumber(k));
+      });
+    }
 
     return parseInt(score.join(""));
   }
@@ -679,19 +719,21 @@ class Poker {
       if (hand.length === 0) {
         append("Player " + i + " is out!");
       } else {
-        append(this.getHandResultString("Player " + i, hand) + "\n");
+        append(this.getHandResultString("Player " + i, hand) + "\n\n");
       }
-      const winners = this.getWinners();
-      //a single winner
-      if (winners.length === 1) {
-        return append("the winner is Player " + winners[0]);
-      }
-      append("A tie between:\n");
-      winners.forEach((player) => {
-        append("Player " + player + " ");
-      });
-      return result;
     }
+    const winners = this.getWinners();
+    //a single winner
+    if (winners.length === 1) {
+      return append(
+        "the winner is Player " + winners[0] + "\nThey win $" + this.pot
+      );
+    }
+    append("A tie between:\n");
+    winners.forEach((player) => {
+      append("Player " + player + " \n");
+    });
+    return append("they will split $" + this.pot);
   }
 
   /**

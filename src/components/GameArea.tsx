@@ -55,8 +55,9 @@ function GameArea(props: any) {
     setcanDiscard(isDiscardRound());
     if (isPayoutRound()) {
       setRound(0);
-      pokerGame.payout(pokerGame.getWinners());
       alert(pokerGame.getGameResultString());
+      pokerGame.payout(pokerGame.getWinners());
+      pokerGame.reset();
     }
   }, [round]);
 
@@ -166,39 +167,6 @@ function GameArea(props: any) {
   return (
     <div>
       <div id="playAreaContainer">
-        <button onClick={() => setcanDiscard(!canDiscard)}>
-          canContinue:{canDiscard ? "T" : "F"}
-        </button>
-        <button onClick={() => setCanBet(!canBet)}>
-          canBet:{canBet ? "T" : "F"}
-        </button>
-        <button
-          onClick={() => {
-            pokerGame.discardAndDraw(0, getHoldPositions());
-            console.log(
-              "Deck sizes",
-              pokerGame.getDeckSize(),
-              pokerGame.getDiscardPileSize()
-            );
-          }}
-        >
-          test discard and draw phase
-        </button>
-        <button
-          onClick={() => {
-            pokerGame.discardTurn(getHoldPositions());
-          }}
-        >
-          test discard and draw on human
-        </button>
-        <button
-          onClick={() => {
-            pokerGame.bettingRound(500);
-          }}
-        >
-          Test Betting Round with $500 bet
-        </button>
-        <button onClick={() => pokerGame.Test()}>Test hand combos</button>
         <div id="designSelector"></div>
         <div id="playArea">
           <div id="leftPlayArea">
