@@ -56,23 +56,17 @@ function DetailSelect(props: any) {
           ></input>
         </div>
       </div>
+      <br />
       <Link to="/poker" className={props.mode ? "lightLink" : "darkLink"}>
         <div
           id="startGameLink"
-          className={props.mode ? "lightLink" : "darkLink"}
+          className={props.mode ? "lightLinkDiv" : "darkLinkDiv"}
         >
-          <label
-            id="startGame"
-            onClick={() => {
-              props.test();
-            }}
-          >
-            Start
-            <br />
-            The
-            <br />
-            Game
-          </label>
+          Start
+          <br />
+          The
+          <br />
+          Game
         </div>
       </Link>
     </div>

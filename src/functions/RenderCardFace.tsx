@@ -3,10 +3,11 @@ import { Card } from "./Deck";
 //cards saved as ./Cards/design1Back.jpg for design 1 back of the card
 const cardFolder = "./Cards/design";
 const fileEnd = ".jpg";
+const defaultString = "default";
 
 //Will render the card front
 const renderFace = (card: Card, design: Number) => {
-  if (!design) return;
+  if (!design) return defaultString;
   return (
     cardFolder + +design + card.valueToString() + card.suitToString() + fileEnd
   );
@@ -14,7 +15,7 @@ const renderFace = (card: Card, design: Number) => {
 
 //Will render the back of a card
 const renderBack = (design: Number) => {
-  if (!design) return;
+  if (!design) return defaultString;
   return cardFolder + +design + "Back" + fileEnd;
 };
 

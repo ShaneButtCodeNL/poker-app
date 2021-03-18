@@ -7,6 +7,7 @@ import DetailSelect from "./components/DetailSelect";
 import GameArea from "./components/GameArea";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { useState } from "react";
+import DesignSelect from "./components/DesignSelect";
 
 function App() {
   ///////////          States            //////////////////////
@@ -23,11 +24,23 @@ function App() {
   //The visual style of the app for now just light and dark
   let [mode, setMode] = useState(0);
   //
+  //Front CardDesign
+  const [frontDesign, setFrontDesign] = useState(0);
+  //
+  //Back Card Design
+  const [backDesign, setBackDesign] = useState(0);
 
   let appClass = "App " + (mode ? "lightMode" : "darkMode");
   return (
     <div className={appClass}>
       <Header mode={mode} setMode={setMode} />
+      <DesignSelect
+        frontDesign={frontDesign}
+        setFrontDesign={setFrontDesign}
+        backDesign={backDesign}
+        setBackDesign={setBackDesign}
+        mode={mode}
+      />
       <Router>
         <Switch>
           <Route path="/poker">

@@ -27,6 +27,10 @@
   --light-card-border: rgb(0, 0, 0);
   --card-height: 15vh;
   --card-width: 4vw;
+  --image-preview-height: 8vh;
+  --image-preview-width: 2.5vw;
+  --image-preview-font-size: 0.5em;
+  --image-preview-lineheight: 0.7em;
 }
 
 body {
@@ -113,12 +117,12 @@ header {
   line-height: 1em;
   text-align: center;
   padding: 0.8em;
-  margin: 1em;
-  margin-left: 5em;
-  margin-right: 5em;
+  margin: auto;
+  margin-top: 1em;
+  max-width: 10vw;
 }
 
-.lightLink {
+.lightLinkDiv {
   background-color: var(--light-link-bg);
 }
 
@@ -127,11 +131,11 @@ header {
   text-decoration: none;
 }
 
-.lightLink:hover {
+.lightLinkDiv:hover {
   background-color: var(--light-link-bg-hover);
 }
 
-.darkLink {
+.darkLinkDiv {
   background-color: var(--dark-link-bg);
 }
 .darkLink:any-link {
@@ -139,8 +143,14 @@ header {
   text-decoration: none;
 }
 
-.darkLink:hover {
+.darkLinkDiv:hover {
   background-color: var(--dark-link-bg-hover);
+}
+
+#detailSelect {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 #detailsInputBox {
@@ -322,4 +332,12 @@ header {
   padding: 0.2em;
   margin: 0.2em;
   line-height: 0.9em;
+}
+
+.imagePreview {
+  height: var(--image-preview-height);
+  width: var(--image-preview-width);
+  border: solid black 2px;
+  font-size: var(--image-preview-font-size);
+  line-height: var(--image-preview-lineheight);
 }
