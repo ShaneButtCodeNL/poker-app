@@ -1,11 +1,15 @@
 import { renderBack, renderFace } from "../functions/RenderCardFace";
 import { Card, Suits, Values } from "../functions/Deck";
 import { useSpring, animated, config } from "react-spring";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import CardImage from "./CardImage";
+//import pokerHands from "../images/pokerHands.png";
 
 export default function DesignSelect(props: any) {
   //Div is collapsed
   const [collapsed, setCollapsed] = useState(false);
+  const backDesignRef = useRef(null);
+  const frontDesignRef = useRef(null);
   // Collapse/Expand div
   const slide = useSpring({
     config: config.default,
@@ -22,6 +26,13 @@ export default function DesignSelect(props: any) {
   //Click Event to Collapse/Expand the animated div
   const clickCollapse = () => {
     setCollapsed(!collapsed);
+  };
+
+  const changeBackDesign = (design: number) => {
+    props.setBackDesign(design);
+  };
+  const changeFrontDesign = (design: number) => {
+    props.setFrontDesign(design);
   };
   //Gets a class for card to reflect mode
   const cardId = (front: boolean, mode: number) => {
@@ -43,7 +54,7 @@ export default function DesignSelect(props: any) {
             {front ? card.toString() : ""}
           </div>
         ) : (
-          <i />
+          <CardImage src={src} />
         )}
       </div>
     );
@@ -59,11 +70,45 @@ export default function DesignSelect(props: any) {
         <br />
         <div id="cardBackDesignSelect" className="hFlex centerFlexAlign">
           {renderImage(renderBack(props.backDesign), false)}
-          <label>Select a design for card backs:</label>
+          <div>
+            <label>Select a design for card backs:</label>
+            <select
+              id="backDesignSelect"
+              ref={backDesignRef}
+              defaultValue="0"
+              onChange={() => {
+                changeBackDesign(parseInt(backDesignRef.current.value));
+                console.log(
+                  renderBack(props.backDesign),
+                  backDesignRef.current.value
+                );
+              }}
+            >
+              <option value="0">Default</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+            </select>
+          </div>
         </div>
         <div id="cardFrontDesignSelect" className="hFlex centerFlexAlign">
           {renderImage(renderFace(card, props.frontDesign), true)}
           <label>Select a design for card faces:</label>
+          <select
+            id="frontDesignSelect"
+            ref={frontDesignRef}
+            defaultValue="0"
+            onChange={() => {
+              changeFrontDesign(parseInt(frontDesignRef.current.value));
+              console.log(
+                renderFace(card, props.backDesign),
+                frontDesignRef.current.value
+              );
+            }}
+          >
+            <option value="0">Default</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
         </div>
       </animated.div>
       <button

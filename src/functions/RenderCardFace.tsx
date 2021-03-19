@@ -1,22 +1,27 @@
 import { Card } from "./Deck";
-//cards saved as ./Cards/design2HeartsTen.jpg for design 2 ten of hearts
-//cards saved as ./Cards/design1Back.jpg for design 1 back of the card
-const cardFolder = "./Cards/design";
-const fileEnd = ".jpg";
+//cards saved as ./Cards/design2/HeartsTen.png for design 2 ten of hearts
+//cards saved as ./Cards/design1/Back.png for design 1 back of the card
+const cardFolder = "/images/Cards/design";
+const fileEnd = ".png";
 const defaultString = "default";
 
 //Will render the card front
 const renderFace = (card: Card, design: Number) => {
   if (!design) return defaultString;
   return (
-    cardFolder + +design + card.valueToString() + card.suitToString() + fileEnd
+    cardFolder +
+    +design +
+    "/" +
+    card.suitToString() +
+    card.valueToString() +
+    fileEnd
   );
 };
 
 //Will render the back of a card
 const renderBack = (design: Number) => {
   if (!design) return defaultString;
-  return cardFolder + +design + "Back" + fileEnd;
+  return cardFolder + +design + "/Back" + fileEnd;
 };
 
 export { renderFace, renderBack };
