@@ -2,7 +2,7 @@ import { renderBack, renderFace } from "../functions/RenderCardFace";
 import { Card, Suits, Values } from "../functions/Deck";
 import { useSpring, animated, config } from "react-spring";
 import { useRef, useState } from "react";
-import CardImage from "./CardImage";
+import PreviewCardImage from "./PreviewCardImage";
 //import pokerHands from "../images/pokerHands.png";
 
 export default function DesignSelect(props: any) {
@@ -49,12 +49,12 @@ export default function DesignSelect(props: any) {
   const renderImage = (src: string, front: boolean) => {
     return (
       <div>
-        {src === "default" ? (
+        {!src ? (
           <div className={cardId(front, props.mode) + " imagePreview"}>
             {front ? card.toString() : ""}
           </div>
         ) : (
-          <CardImage src={src} />
+          <PreviewCardImage src={src} />
         )}
       </div>
     );
@@ -84,9 +84,9 @@ export default function DesignSelect(props: any) {
                 );
               }}
             >
-              <option value="0">Default</option>
               <option value="1">1</option>
               <option value="2">2</option>
+              <option value="3">3</option>
             </select>
           </div>
         </div>
@@ -105,9 +105,9 @@ export default function DesignSelect(props: any) {
               );
             }}
           >
-            <option value="0">Default</option>
             <option value="1">1</option>
             <option value="2">2</option>
+            <option value="3">3</option>
           </select>
         </div>
       </animated.div>

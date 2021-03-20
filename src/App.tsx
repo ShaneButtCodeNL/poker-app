@@ -25,10 +25,10 @@ function App() {
   let [mode, setMode] = useState(0);
   //
   //Front CardDesign
-  const [frontDesign, setFrontDesign] = useState(0);
+  const [frontDesign, setFrontDesign] = useState(1);
   //
   //Back Card Design
-  const [backDesign, setBackDesign] = useState(0);
+  const [backDesign, setBackDesign] = useState(1);
 
   let appClass = "App " + (mode ? "lightMode" : "darkMode");
   return (
@@ -49,6 +49,8 @@ function App() {
               minBet={minBet}
               numOfPlayers={numOfPlayers}
               mode={mode}
+              frontDesign={frontDesign}
+              backDesign={backDesign}
             />
           </Route>
           <Route path="/" exact>

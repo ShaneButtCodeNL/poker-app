@@ -7,7 +7,7 @@ const defaultString = "default";
 
 //Will render the card front
 const renderFace = (card: Card, design: Number) => {
-  if (!design) return defaultString;
+  if (!design) return null;
   return (
     cardFolder +
     +design +
@@ -20,7 +20,7 @@ const renderFace = (card: Card, design: Number) => {
 
 //Will render the back of a card
 const renderBack = (design: Number) => {
-  if (!design) return defaultString;
+  if (!design) return null;
   return cardFolder + +design + "/Back" + fileEnd;
 };
 

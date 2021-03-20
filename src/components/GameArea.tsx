@@ -158,7 +158,8 @@ function GameArea(props: any) {
           setHoldList={setHoldList}
           renderDiscardButton={renderDiscardButton}
           canDiscard={canDiscard}
-          cardDesign={cardDesign}
+          frontDesign={props.frontDesign}
+          backDesign={props.backDesign}
         />
       );
     }
@@ -181,8 +182,8 @@ function GameArea(props: any) {
             <div id="centerPlayAreaCenter">
               <DeckArea
                 deck={deck}
+                backDesign={props.backDesign}
                 discardPile={discardPile}
-                cardDesign={cardDesign}
                 mode={props.mode}
                 pot={pot}
                 ante={props.minBet}

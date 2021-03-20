@@ -41,6 +41,30 @@ body {
   line-height: 1.5em;
 }
 
+.rotate90 {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+
+.rotate180 {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.rotate270 {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
+
 .maxHeight {
   height: 100%;
 }
@@ -169,7 +193,7 @@ header {
 }
 
 #playAreaContainer {
-  width: 100vw;
+  width: 80vw;
   min-height: 50vh;
 }
 
@@ -323,6 +347,8 @@ header {
   margin: 0.5em;
   border-style: dashed;
   border-color: black;
+  min-width: 5vw;
+  min-height: 8vw;
 }
 
 .playerInfoBox {
@@ -332,6 +358,15 @@ header {
   padding: 0.2em;
   margin: 0.2em;
   line-height: 0.9em;
+  flex: 1;
+}
+
+.hand {
+  flex: 1;
+}
+
+.handZone {
+  min-width: 10vw;
 }
 
 .imagePreview {
@@ -340,4 +375,13 @@ header {
   border: solid black 2px;
   font-size: var(--image-preview-font-size);
   line-height: var(--image-preview-lineheight);
+}
+
+.cardImage {
+  max-height: 100%;
+  max-width: 100%;
+}
+.cardContainer {
+  max-height: 8vw;
+  max-width: 5vw;
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { renderFace, renderBack } from "../functions/RenderCardFace";
 import { Card as ACard } from "../functions/Deck";
+import DisplayCard from "./DisplayCard";
 
 export default function Card(props: any) {
   const [hold, setHold] = useState(true);
@@ -49,7 +50,7 @@ export default function Card(props: any) {
         <div></div>
       );
   }
-
+  /*
   function renderCard() {
     if (props.cardDesign) {
       const cardLocation = props.player
@@ -77,11 +78,42 @@ export default function Card(props: any) {
       }
     }
   }
+  */
+  const getRotation = (player: number) => {
+    if (player === 0) return;
+    if (player === 1) return 180;
+    if (player === 2) return 90;
+    return 270;
+  };
+  const renderCard = (
+    player: number,
+    mode: number,
+    card: ACard,
+    frontDesign: number,
+    backDesign: number
+  ) => {
+    return (
+      <DisplayCard
+        player={player}
+        rotation={getRotation(player)}
+        mode={mode}
+        card={card}
+        frontDesign={frontDesign}
+        backDesign={backDesign}
+      />
+    );
+  };
 
   return (
     <div className="cardZone">
       {makeHold(props.player)}
-      {renderCard()}
+      {renderCard(
+        props.player,
+        props.mode,
+        props.card,
+        props.frontDesign,
+        props.backDesign
+      )}
     </div>
   );
 }
