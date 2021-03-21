@@ -1,6 +1,8 @@
 :root {
   --dark-background: rgb(41, 41, 41);
   --light-background: rgb(209, 209, 209);
+  --dark-background-transparent: rgba(30, 30, 30, 0.9);
+  --light-background-transparent: rgba(219, 219, 219, 0.9);
   --dark-background-font-color: rgb(182, 182, 182);
   --light-background-font-color: rgb(0, 0, 0);
   --light-button-text: rgb(250, 162, 0);
@@ -384,4 +386,23 @@ header {
 .cardContainer {
   max-height: 8vw;
   max-width: 5vw;
+}
+
+#gameResultDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+.lightTransBG {
+  background-color: var(--light-background-transparent);
+}
+
+.darkTransBG {
+  background-color: var(--dark-background-transparent);
 }

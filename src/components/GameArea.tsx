@@ -7,6 +7,7 @@ import PlayerInfo from "./PlayerInfo";
 //Functions
 import Poker from "../functions/Poker";
 import PlayerBet from "./PlayerBet";
+import GameResult from "./GameResult";
 
 function GameArea(props: any) {
   ////////////////////////    States    ///////////////////////////////
@@ -26,14 +27,14 @@ function GameArea(props: any) {
   const [pot, setPot] = useState(0);
   //Positions of cards to be kept
   const [holdList, setHoldList] = useState([true, true, true, true, true]);
-  //Card design
-  const [cardDesign, setCardDesign] = useState(0);
   //Can bet
   const [canBet, setCanBet] = useState(false);
   //Can select cards to discard
   const [canDiscard, setcanDiscard] = useState(false);
   //can start a round
   const [canStart, setCanStart] = useState(true);
+  //The game state 1:win 0:continue -1:lose
+  const [gameState, setGameState] = useState(0);
   //The game
   const [pokerGame, setPokerGame] = useState(() => {
     return new Poker(props.minBet, props.startMoney, props.numOfPlayers, {
@@ -48,6 +49,23 @@ function GameArea(props: any) {
     });
   });
 
+  const restartGame = () => {
+    setPokerGame(
+      new Poker(props.minBet, props.startMoney, props.numOfPlayers, {
+        setRound: setRound,
+        setPlayerTurn: setPlayerTurn,
+        setPot: setPot,
+        setHoldList: setHoldList,
+        setHeldCards: setHeldCards,
+        setHeldCash: setHeldCash,
+        setDeck: setDeck,
+        setDiscardPile: setDiscardPile,
+      })
+    );
+    setRound(0);
+    setGameState(0);
+  };
+
   //Updates round
   useEffect(() => {
     setCanBet(isBettingRound());
@@ -58,6 +76,9 @@ function GameArea(props: any) {
       alert(pokerGame.getGameResultString());
       pokerGame.payout(pokerGame.getWinners());
       pokerGame.reset();
+      pokerGame.checkGameState().then((state) => {
+        setGameState(state);
+      });
     }
   }, [round]);
 
@@ -165,43 +186,47 @@ function GameArea(props: any) {
     }
   };
 
+  const renderResults = (state: number) => {
+    return state === 0 ? null : (
+      <GameResult mode={props.mode} restartGame={restartGame} />
+    );
+  };
+
   return (
-    <div>
-      <div id="playAreaContainer">
-        <div id="designSelector"></div>
-        <div id="playArea">
-          <div id="leftPlayArea">
-            {renderPlayerInfo(3)}
-            {renderHand(3)}
+    <div id="playAreaContainer">
+      {renderResults(gameState)}
+      <div id="playArea">
+        <div id="leftPlayArea">
+          {renderPlayerInfo(3)}
+          {renderHand(3)}
+        </div>
+        <div id="centerPlayArea">
+          <div id="centerPlayAreaTop">
+            {renderPlayerInfo(2)}
+            {renderHand(2)}
           </div>
-          <div id="centerPlayArea">
-            <div id="centerPlayAreaTop">
-              {renderPlayerInfo(2)}
-              {renderHand(2)}
-            </div>
-            <div id="centerPlayAreaCenter">
-              <DeckArea
-                deck={deck}
-                backDesign={props.backDesign}
-                discardPile={discardPile}
-                mode={props.mode}
-                pot={pot}
-                ante={props.minBet}
-                canStart={canStart}
-                deal={deal}
-                setCanStart={setCanStart}
-              />
-            </div>
-            <div id="centerPlayAreaBottom">
-              {renderBettingWindow()}
-              {renderPlayerInfo(1)}
-              {renderHand(1)}
-            </div>
+          <div id="centerPlayAreaCenter">
+            <DeckArea
+              deck={deck}
+              backDesign={props.backDesign}
+              discardPile={discardPile}
+              mode={props.mode}
+              pot={pot}
+              ante={props.minBet}
+              canStart={canStart}
+              deal={deal}
+              setCanStart={setCanStart}
+            />
           </div>
-          <div id="rightPlayArea">
-            {renderPlayerInfo(4)}
-            {renderHand(4)}
+          <div id="centerPlayAreaBottom">
+            {renderBettingWindow()}
+            {renderPlayerInfo(1)}
+            {renderHand(1)}
           </div>
+        </div>
+        <div id="rightPlayArea">
+          {renderPlayerInfo(4)}
+          {renderHand(4)}
         </div>
       </div>
     </div>

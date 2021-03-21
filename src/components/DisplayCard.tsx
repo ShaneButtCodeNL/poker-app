@@ -23,10 +23,8 @@ export default function DisplayCard(props: any) {
    * @returns card container class name
    */
   const divClass = (rotation: number) => {
-    console.log("rotation", rotation, getRotation(rotation));
     let className = "cardContainer ";
     className = className + getRotation(rotation);
-    console.log("classname:", className);
     return className;
   };
 
@@ -41,15 +39,6 @@ export default function DisplayCard(props: any) {
     card: Card,
     player: number
   ) => {
-    console.log(
-      "frontDesign:",
-      frontDesign,
-      " backDesign:",
-      backDesign,
-      " src:",
-      renderBack(backDesign),
-      renderFace(card, frontDesign)
-    );
     return (
       <img
         src={player ? renderBack(backDesign) : renderFace(card, frontDesign)}

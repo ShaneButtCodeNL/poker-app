@@ -782,6 +782,37 @@ class Poker {
     this.stateFunctions.setPot(0);
   }
 
+  /**
+   * Checks game state win,lose,coninue
+   * @returns The state of the game 1:player win,0:no win condition met,-1:player lost
+   */
+  public async checkGameState() {
+    //lose
+    if (this.heldCash[0] <= 0) return -1;
+    //Game not over
+    for (let i = 1; i < this.numOfPlayers; i++) {
+      if (this.heldCash[i]) return 0;
+    }
+    //Player wins game
+    return 1;
+  }
+
+  /**
+   * Returns the 0 indexed player number of the player who won the game
+   * @returns 0 indexed player number
+   */
+  public getGameWinner() {
+    let state: number;
+    this.checkGameState().then((s) => {
+      state = s;
+    });
+    if (state === 0) return;
+    if (state === 1) return 0;
+    return this.heldCash.forEach((cash, player) => {
+      if (cash) return player;
+    });
+  }
+
   //Testing erase later
   public Test() {
     const royalFlush = [
