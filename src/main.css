@@ -29,7 +29,7 @@
   --light-card-border: rgb(0, 0, 0);
   --card-height: 15vh;
   --card-width: 4vw;
-  --image-preview-height: 8vh;
+  --image-preview-height: 30%;
   --image-preview-width: 2.5vw;
   --image-preview-font-size: 0.5em;
   --image-preview-lineheight: 0.7em;
@@ -79,6 +79,10 @@ body {
 .hFlex {
   display: flex;
   flex-direction: row;
+}
+
+.noWrap {
+  flex-wrap: nowrap;
 }
 
 .centerFlexAlign {
@@ -357,9 +361,9 @@ header {
   border: solid;
   border-width: 1px;
   border-color: black;
-  padding: 0.2em;
+  padding: 0.5em;
   margin: 0.2em;
-  line-height: 0.9em;
+  line-height: 1.1em;
   flex: 1;
 }
 
@@ -405,4 +409,27 @@ header {
 
 .darkTransBG {
   background-color: var(--dark-background-transparent);
+}
+
+#designSelectContainer {
+  min-width: 100vw;
+}
+
+#slideDivBtn {
+  width: 100%;
+  text-align: center;
+  border: 1px;
+  border-left-style: none;
+  border-right-style: none;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  cursor: pointer;
+}
+
+.darkSlideDivBtn {
+  color: rgba(230, 230, 230, 0.2);
+}
+
+.lightSlideDivBtn {
+  color: rgba(50, 50, 50, 0.2);
 }

@@ -68,7 +68,7 @@ export default function DesignSelect(props: any) {
       >
         <label>Select a card design below:</label>
         <br />
-        <div id="cardBackDesignSelect" className="hFlex centerFlexAlign">
+        <div id="cardBackDesignSelect" className="hFlex centerFlexAlign noWrap">
           {renderImage(renderBack(props.backDesign), false)}
           <div>
             <label>Select a design for card backs:</label>
@@ -111,13 +111,15 @@ export default function DesignSelect(props: any) {
           </select>
         </div>
       </animated.div>
-      <button
+      <div
+        id="slideDivBtn"
+        className={props.mode ? "lightSlideDivBtn" : "darkSlideDivBtn"}
         onClick={() => {
           clickCollapse();
         }}
       >
         {collapsed ? "Expand" : "Collapse"}
-      </button>
+      </div>
     </div>
   );
 }
