@@ -1,0 +1,14 @@
+todos:
+[] Add message for game result screen
+[] add animations to discard
+[] add animations to draw
+[] add animations to shuffle
+[] fix apaceing of 3p and 4p cards
+[] fix designs so card backs are separate from face designs
+[] add more card designs
+[] add ability to add custom designs
+
+known bugs:
+[] when player 1 has more money than a cpu player at start of round bets enough for so cpu has to bet all money in first betting round second betting round doesn't end
+[] if minBet is larger than starting money game breaks
+[] when playing 3p screen becomes uncentered
