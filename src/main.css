@@ -71,6 +71,11 @@ body {
   height: 100%;
 }
 
+.height0 {
+  max-height: 0%;
+  overflow: visible;
+}
+
 .vFlex {
   display: flex;
   flex-direction: column;
@@ -432,4 +437,21 @@ header {
 
 .lightSlideDivBtn {
   color: rgba(50, 50, 50, 0.2);
+}
+
+.block {
+  padding: 0.3em;
+  margin: 1em;
+  text-align: center;
+  line-height: 1.3em;
+  border-radius: 2em;
+  border-style: solid;
+}
+
+.darkBlock {
+  background-color: rgba(200, 200, 200, 0.1);
+}
+
+.lightBlock {
+  background-color: rgba(10, 10, 10, 0.1);
 }

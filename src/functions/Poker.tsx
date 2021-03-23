@@ -96,7 +96,7 @@ class Poker {
    */
   public isOut(player: Number) {
     //Checks if a player is playing in round by checking if they have a hand
-    return this.heldCards[+player].length === 0;
+    return this.heldCards[+player].length === 0 || this.heldCash[+player] === 0;
   }
 
   /**
@@ -193,6 +193,8 @@ class Poker {
    * @param cardPositions The zero based positions of cards they are discarding ex [0,1,4]
    */
   public async discardAndDraw(player: Number, cardPositions: Array<Number>) {
+    //Error handleing
+    if (this.isOut(player)) return;
     //Copy hands
     let hands = [...this.heldCards];
     //For each selected card position
@@ -201,19 +203,8 @@ class Poker {
       this.discardPile.addToTop(hands[+player][+pos]);
       //Draw new card and place in hand in same position
       await this.draw().then((card) => {
-        console.log(card.toString());
         hands[+player][+pos] = card;
       });
-      /**
-       * *********Testing remove
-       */
-      console.log(
-        "Deck:",
-        this.getDeckSize(),
-        "\nDiscard:",
-        this.getDiscardPileSize()
-      );
-      //***************** */
     }
     //Update states
     this.stateFunctions.setDiscardPile(this.discardPile);
@@ -346,10 +337,14 @@ class Poker {
   public async bettingRound(bet: Number) {
     //Round continues until all bets are equal and each player has had a turn to bet
     while (this.turnCount < this.numOfPlayers) {
-      //Computer Players
-      if (this.getPlayerTurn()) {
+      //Computer Players and player is not out
+      if (this.getPlayerTurn() && !this.isOut(this.getPlayerTurn())) {
         //Simple logic for now computers will only call
-        await this.call(+this.getPlayerTurn());
+        //if has enough to call
+        if (this.canBet(this.getPlayerTurn()))
+          await this.call(+this.getPlayerTurn());
+        //else go all in
+        else this.allIn(this.getPlayerTurn());
       }
       //Human Player
       else {
@@ -787,14 +782,17 @@ class Poker {
    * @returns The state of the game 1:player win,0:no win condition met,-1:player lost
    */
   public async checkGameState() {
+    //start in win state
+    let state = 1;
     //lose
     if (this.heldCash[0] <= 0) return -1;
     //Game not over
     for (let i = 1; i < this.numOfPlayers; i++) {
-      if (this.heldCash[i]) return 0;
+      //if computer player can still ante in then game not over
+      if (this.heldCash[i] >= this.minBet) state = 0;
     }
-    //Player wins game
-    return 1;
+    //Return 1 for win 0 for continue
+    return state;
   }
 
   /**
