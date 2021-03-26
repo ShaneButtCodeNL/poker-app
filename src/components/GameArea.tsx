@@ -145,14 +145,23 @@ function GameArea(props: any) {
       return (
         <PlayerBet
           bet={async (betAmmount: Number) => {
+            if (
+              betAmmount !== heldCash[0] &&
+              betAmmount < pokerGame.getCurrentBet(0) &&
+              heldCash[0]
+            ) {
+              alert(`Need to bet at least $${pokerGame.getCurrentBet(0)}!!`);
+              return;
+            }
             await pokerGame.bettingRound(betAmmount);
-            if (pokerGame.checkBets()) {
+            if (pokerGame.checkBets() || !heldCash[0]) {
               let r = round + 1;
               setRound(r);
               pokerGame.resetBets();
             }
           }}
           callBet={pokerGame.getCurrentBet(0)}
+          playerMoney={heldCash[0]}
         />
       );
     }

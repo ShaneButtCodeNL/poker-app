@@ -1,5 +1,3 @@
-import { Deck } from "../functions/Deck";
-import { renderBack } from "../functions/RenderCardFace";
 import DisplayCard from "./DisplayCard";
 import { Card } from "../functions/Deck";
 

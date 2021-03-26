@@ -3,11 +3,16 @@ import { Card, Suits, Values } from "../functions/Deck";
 import { useSpring, animated, config } from "react-spring";
 import { useRef, useState } from "react";
 import PreviewCardImage from "./PreviewCardImage";
-//import pokerHands from "../images/pokerHands.png";
 
 export default function DesignSelect(props: any) {
+  const expandedString = (
+    <> &#8673;&#8673;&#8673; {"Hide Designs"} &#8673;&#8673;&#8673;</>
+  );
+  const collapsedString = (
+    <> &#8675;&#8675;&#8675; {"Show Designs"} &#8675;&#8675;&#8675;</>
+  );
   //Div is collapsed
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const backDesignRef = useRef(null);
   const frontDesignRef = useRef(null);
   // Collapse/Expand div
@@ -60,7 +65,7 @@ export default function DesignSelect(props: any) {
     );
   };
   return (
-    <div id="designSelectContainer">
+    <div id="designSelectContainer" style={{ marginBottom: "1.5em" }}>
       <animated.div
         id="aniDesignSelect"
         className="vFlex centerFlexAlign"
@@ -99,10 +104,6 @@ export default function DesignSelect(props: any) {
             defaultValue="0"
             onChange={() => {
               changeFrontDesign(parseInt(frontDesignRef.current.value));
-              console.log(
-                renderFace(card, props.backDesign),
-                frontDesignRef.current.value
-              );
             }}
           >
             <option value="1">1</option>
@@ -118,7 +119,7 @@ export default function DesignSelect(props: any) {
           clickCollapse();
         }}
       >
-        {collapsed ? "Expand" : "Collapse"}
+        {collapsed ? collapsedString : expandedString}
       </div>
     </div>
   );

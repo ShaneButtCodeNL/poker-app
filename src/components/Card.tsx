@@ -41,7 +41,7 @@ export default function Card(props: any) {
     if (+player === 0)
       return props.canDiscard ? (
         <div
-          className="cardButton btn"
+          className={`holdBtn ${hold ? "keep" : "notKeep"}Btn cardButton btn`}
           onClick={() => holdClickEvent(props.cardPos)}
         >
           {hold ? "HOLD" : "DISCARD"}
@@ -50,35 +50,6 @@ export default function Card(props: any) {
         <div></div>
       );
   }
-  /*
-  function renderCard() {
-    if (props.cardDesign) {
-      const cardLocation = props.player
-        ? renderBack(props.design)
-        : renderFace(props.card, props.design);
-      return (
-        <div>
-          <img src={cardLocation}></img>
-        </div>
-      );
-    } else {
-      if (!props.player) {
-        return (
-          <div className={cardClass(props.card)}>{props.card.toString()}</div>
-        );
-      } else {
-        return (
-          <div
-            className={
-              cardClass(props.card) +
-              (props.mode ? " plainCardBackLight" : " plainCardBackDark")
-            }
-          ></div>
-        );
-      }
-    }
-  }
-  */
   const getRotation = (player: number) => {
     if (player === 0) return;
     if (player === 1) return 180;

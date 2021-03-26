@@ -2,30 +2,52 @@ import { useRef } from "react";
 
 export default function PlayerBet(props: any) {
   const raiseRef = useRef(null);
-  return (
+  return !props.playerMoney ? (
     <div id="playerBetContainer">
+      <button
+        onClick={() => {
+          props.bet(0);
+        }}
+      >
+        Continue.
+      </button>
+    </div>
+  ) : (
+    <div id="playerBetContainer" style={{ margin: ".6em" }}>
       <span>Bet</span>
       <br />
       <button
+        style={{ minWidth: "60%", marginBottom: ".4em" }}
         onClick={() => {
-          props.bet(props.callBet);
+          props.bet(
+            props.playerMoney <= props.callBet
+              ? props.playerMoney
+              : props.callBet
+          );
         }}
       >
-        ${props.callBet} TO CALL
+        {props.playerMoney <= props.callBet
+          ? `ALL IN`
+          : `$${props.callBet} TO CALL`}
       </button>
       <br />
-      <input
-        type="number"
-        defaultValue={props.currentBet}
-        ref={raiseRef}
-      ></input>
-      <button
-        onClick={() => {
-          props.bet(raiseRef.current.value);
-        }}
-      >
-        Raise
-      </button>
+      <div className="centerFlexAlign">
+        <input
+          type="number"
+          defaultValue={props.currentBet}
+          ref={raiseRef}
+          disabled={props.playerMoney <= props.callBet}
+        ></input>
+        <button
+          disabled={props.playerMoney <= props.callBet}
+          style={{ whiteSpace: "pre-wrap", marginLeft: ".5em" }}
+          onClick={() => {
+            props.bet(raiseRef.current.value);
+          }}
+        >
+          {props.playerMoney > props.callBet ? "Raise" : "Cannot\nRaise"}
+        </button>
+      </div>
     </div>
   );
 }

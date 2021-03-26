@@ -3,18 +3,25 @@
  */
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Block from "./Block";
 
 function DetailSelect(props: any) {
-  const getCanStart = () => {
-    return props.minBet <= props.startMoney;
+  const [startStyle, setStartStyle] = useState({});
+  const getErrorMessage = () => {
+    if (props.minBet < 0) return 1;
+    if (props.startMoney <= 0) return 2;
+    if (props.minBet > props.startMoney) return 3;
+    return null;
   };
   let startMoneyRef: any = React.createRef();
   let numberOfPlayersRef: any = React.createRef();
   let minBetRef: any = React.createRef();
-  const [canStart, setCanStart] = useState(getCanStart());
+  const [canStart, setCanStart] = useState(getErrorMessage() === null);
+  const [errorState, setErrorState] = useState(getErrorMessage());
 
   useEffect(() => {
-    setCanStart(getCanStart());
+    setCanStart(getErrorMessage() === null);
+    setErrorState(getErrorMessage());
   }, [props.startMoney, props.minBet]);
 
   return (
@@ -70,6 +77,16 @@ function DetailSelect(props: any) {
           <div
             id="startGameLink"
             className={props.mode ? "lightLinkDiv" : "darkLinkDiv"}
+            style={startStyle}
+            onMouseDown={() => {
+              setStartStyle({ borderStyle: "inset" });
+            }}
+            onMouseUp={() => {
+              setStartStyle({});
+            }}
+            onMouseLeave={() => {
+              setStartStyle({});
+            }}
           >
             Start
             <br />
@@ -79,22 +96,24 @@ function DetailSelect(props: any) {
           </div>
         </Link>
       ) : (
-        <div className={`block ${props.mode ? "light" : "dark"}Block`}>
-          <span
-            style={{
-              fontWeight: 700,
-              textDecoration: "underline",
-              color: "red",
-            }}
-          >
-            !!! INVALID ENTRY !!!
-          </span>
-          <br />
-          Minimum bet cannot exceed
-          <br />
-          starting ammount of money
-        </div>
+        <Block mode={props.mode} code={errorState} />
       )}
+      <br />
+      {props.minBet === 0 ? (
+        <div
+          style={{
+            whiteSpace: "pre-wrap",
+            textAlign: "center",
+            padding: "0.5em",
+            margin: ".7em",
+            borderStyle: "solid",
+          }}
+        >
+          {
+            " Warning minimum bet is zero.\nThis means no cost to ante\nand can lead to zero dollar pots"
+          }
+        </div>
+      ) : null}
     </div>
   );
 }

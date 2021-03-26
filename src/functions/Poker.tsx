@@ -219,28 +219,25 @@ class Poker {
    * @param bet The amount to be bet
    */
   public async makeBet(player: Number, bet: Number) {
-    //Bet is high enough
-    if (+bet >= +this.getCurrentBet(+player)) {
-      //Has money for bet
-      if (this.heldCash[+player] >= +bet) {
-        //Update current bet
-        this.updateBet(+bet + +this.bets[+player]);
-        //Copy money held
-        let cash = [...this.heldCash];
-        //Take bet from player
-        cash[+player] = +cash[+player] - +bet;
-        //Add bet to pot
-        this.pot = +this.pot + +bet;
-        //Updates cash ammounts
-        this.stateFunctions.setHeldCash([...cash]);
-        this.heldCash = [...cash];
-        //Updates pot
-        this.stateFunctions.setPot(this.pot);
-        //Updates current bet
-        const newBets = [...this.bets];
-        newBets[+player] = +this.currentBet;
-        this.bets = [...newBets];
-      }
+    //Has money for bet
+    if (this.heldCash[+player] >= +bet) {
+      //Update current bet
+      this.updateBet(+bet + +this.bets[+player]);
+      //Copy money held
+      let cash = [...this.heldCash];
+      //Take bet from player
+      cash[+player] = +cash[+player] - +bet;
+      //Add bet to pot
+      this.pot = +this.pot + +bet;
+      //Updates cash ammounts
+      this.stateFunctions.setHeldCash([...cash]);
+      this.heldCash = [...cash];
+      //Updates pot
+      this.stateFunctions.setPot(this.pot);
+      //Updates current bet
+      const newBets = [...this.bets];
+      newBets[+player] = +this.currentBet;
+      this.bets = [...newBets];
     }
     /************************** 
         TODO ERROR HANDLEING

@@ -34,12 +34,25 @@
   --image-preview-font-size: 0.5em;
   --image-preview-lineheight: 0.7em;
 }
+@import url(https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Lobster&family=Press+Start+2P&display=swap);
 
 body {
   margin: 0 0 0 0;
   padding: 00 0 0 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Press Start 2P", Arial, Helvetica, sans-serif;
   font-size: 1em;
+  line-height: 1.5em;
+}
+button {
+  border-radius: 1.5em;
+  line-height: 1.5em;
+  font-family: "Press Start 2P";
+}
+
+#title {
+  font-family: "Lobster", cursive;
+  font-size: 3em;
   line-height: 1.5em;
 }
 
@@ -155,6 +168,12 @@ header {
   margin: auto;
   margin-top: 1em;
   max-width: 10vw;
+  border-style: outset;
+  border-radius: 2em;
+}
+
+#startGameLink:hover {
+  padding: 1em;
 }
 
 .lightLinkDiv {
@@ -219,12 +238,15 @@ header {
   display: flex;
   flex-direction: row;
   align-items: center;
+  min-width: 30%;
 }
 
 #rightPlayArea {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
+
+  min-width: 30%;
 }
 
 #centerPlayAreaTop {
@@ -243,12 +265,13 @@ header {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  flex-basis: auto;
+  min-width: 30%;
 }
 
 .verticalHand {
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 .horazontalHand {
@@ -269,8 +292,28 @@ header {
   padding: 0.5em;
 }
 
+.holdBtn {
+  border-radius: 2em;
+}
+
+#canStartBtn {
+  border-radius: 1.5em;
+  border-style: outset;
+}
+
+.keepBtn {
+  font-size: 1em;
+}
+
+.notKeepBtn {
+  font-size: 0.65em;
+  padding: 0.75em;
+}
+
 .continueButton {
   margin: 1em;
+  border-radius: 1.5em;
+  border-style: outset;
 }
 
 .cardDark {
@@ -369,11 +412,9 @@ header {
   padding: 0.5em;
   margin: 0.2em;
   line-height: 1.1em;
-  flex: 1;
 }
 
 .hand {
-  flex: 1;
 }
 
 .handZone {

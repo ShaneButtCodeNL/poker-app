@@ -1,5 +1,10 @@
 todos:
+[X] polish header
+[X] polish start button
+[X] add fonts
+[X] update index.html
 [] Add message for game result screen
+[] polish message for round results
 [] add animations to discard
 [] add animations to draw
 [] add animations to shuffle
@@ -9,8 +14,8 @@ todos:
 [] add ability to add custom designs
 [] implement allIn bet
 [] implement check
-[] fix button designs
-[] polish slide div for card designs
+[X] fix button designs
+[X] polish slide div for card designs
 [] improve light and dark mode colors
 [] add ability for player to use a custom name
 [] add custom names for cpu's
@@ -20,6 +25,11 @@ known bugs:
 [X] when player 1 has more money than a cpu player at start of round bets enough for so cpu has to bet all money in first betting round second betting round doesn't end
 [X] if minBet is larger than starting money game breaks
     // Cannot start game if minimum bet is lower than  start money
-[] when playing 3p screen becomes uncentered
+[X] when playing 3p screen becomes uncentered
 [X] player who is out will be given a card after betting phase and stall game
 [X] when player has less than required minbet game doesn't end
+[X] game can start with 0 starting money
+    //games can have zero dollar pots
+[X] if raise is less than needed bet loops
+    //Player is given notice of how much they need to bet
+[X] if player has 0 money before 2nd betting round game is in inf loop
