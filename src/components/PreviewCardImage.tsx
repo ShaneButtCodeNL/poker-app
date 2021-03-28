@@ -1,5 +1,3 @@
-import { useState } from "react";
-import back from "../images/Cards/design1/Back.png";
 export default function PreviewCardImage(props) {
   return (
     <img

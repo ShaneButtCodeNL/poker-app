@@ -9,7 +9,8 @@ todos:
 [] add animations to draw
 [] add animations to shuffle
 [] fix apaceing of 3p and 4p cards
-[] fix designs so card backs are separate from face designs
+[X] fix designs so card backs are separate from face designs
+[] find way to dynamicly count designs
 [] add more card designs
 [] add ability to add custom designs
 [] implement allIn bet
@@ -20,6 +21,7 @@ todos:
 [] add ability for player to use a custom name
 [] add custom names for cpu's
 [] add better ai for cpu
+[] add some preset game types like high risk
 
 known bugs:
 [X] when player 1 has more money than a cpu player at start of round bets enough for so cpu has to bet all money in first betting round second betting round doesn't end

@@ -5,6 +5,8 @@ import { useRef, useState } from "react";
 import PreviewCardImage from "./PreviewCardImage";
 
 export default function DesignSelect(props: any) {
+  const backDir = `${process.env.PUBLIC_URL}/images/cards/back`;
+  const faceDir = `${process.env.PUBLIC_URL}/images/cards/face`;
   const expandedString = (
     <> &#8673;&#8673;&#8673; {"Hide Designs"} &#8673;&#8673;&#8673;</>
   );
@@ -107,8 +109,6 @@ export default function DesignSelect(props: any) {
             }}
           >
             <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
           </select>
         </div>
       </animated.div>
