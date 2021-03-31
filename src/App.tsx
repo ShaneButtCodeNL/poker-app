@@ -29,6 +29,9 @@ function App() {
   //
   //Back Card Design
   const [backDesign, setBackDesign] = useState(1);
+  //
+  //Player's name
+  const [name, setName] = useState("");
 
   let appClass = "App " + (mode ? "lightMode" : "darkMode");
   return (
@@ -51,6 +54,7 @@ function App() {
               mode={mode}
               frontDesign={frontDesign}
               backDesign={backDesign}
+              name={name}
             />
           </Route>
           <Route path="/" exact>
@@ -62,16 +66,8 @@ function App() {
               setNumOfPlayers={setNumOfPlayers}
               setMinBet={setMinBet}
               mode={mode}
-              test={() =>
-                console.log(
-                  "Start Money:",
-                  startMoney,
-                  "MinBet:",
-                  minBet,
-                  "NumOfPlayers",
-                  numOfPlayers
-                )
-              }
+              name={name}
+              setName={setName}
             />
           </Route>
         </Switch>

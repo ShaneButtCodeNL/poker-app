@@ -26,6 +26,12 @@ class Poker {
   private round: Number;
   //Keepstrack of turns in a round
   private turnCount: Number;
+  //List of player names
+  private names: Array<string>;
+  //GameFeed
+  private gameFeed: Array<string>;
+  //Ante amount;
+  private anteAmount: number;
 
   /**
    * Sets up initial state of the game
@@ -37,12 +43,15 @@ class Poker {
     minBet: Number,
     startCash: Number,
     numOfPlayers: Number,
+    names: Array<string>,
+    gameFeed: Array<string>,
     stateFunctions: any
   ) {
     this.stateFunctions = stateFunctions;
     this.pot = 0;
     this.round = 0;
     this.turnCount = 0;
+    this.anteAmount = +minBet;
     this.bets = [];
     this.stateFunctions.setPot(this.pot);
     this.minBet = +minBet;
@@ -52,6 +61,8 @@ class Poker {
     this.numOfPlayers = +numOfPlayers;
     this.heldCards = [];
     this.heldCash = [];
+    this.gameFeed = [...gameFeed];
+    this.names = names;
     //Shuffle deck 5 times just because
     for (let i = 0; i < 5; i++) {
       this.deck.shuffle();
@@ -66,6 +77,18 @@ class Poker {
     stateFunctions.setDeck(this.deck);
     stateFunctions.setDiscardPile(this.discardPile);
     stateFunctions.setRound(this.round);
+    this.updateFeed("The game Begins!");
+  }
+
+  /**
+   *
+   * @param str New feed item to be added to the feed
+   */
+  private updateFeed(str: string) {
+    //Add string to top of stack
+    this.gameFeed.unshift(str);
+    //Update state
+    this.stateFunctions.setGameFeed([...this.gameFeed]);
   }
 
   /**
@@ -194,10 +217,18 @@ class Poker {
    */
   public async discardAndDraw(player: Number, cardPositions: Array<Number>) {
     //Error handleing
-    if (this.isOut(player)) return;
+    //player has no hand
+    if (this.heldCards[+player].length === 0) return;
+    if (this.isOut(player) && !this.heldCards[+player]) return;
     //Copy hands
     let hands = [...this.heldCards];
     //For each selected card position
+    this.updateFeed(
+      `${this.names[+player]} discards ${cardPositions.length} cards.`
+    );
+    console.log(
+      `${this.names[+player]} discards ${cardPositions.length} cards.`
+    );
     for (let pos of cardPositions) {
       //Add selected card to discard pile
       this.discardPile.addToTop(hands[+player][+pos]);
@@ -247,21 +278,21 @@ class Poker {
 
   /**
    * Initial bet to play a game of poker
-   * @param player player to ante if null everyone antes
+   * @param player player to ante
    */
   public ante(player?: number) {
-    if (player === null) {
-      for (let i = 0; i < this.numOfPlayers; i++) {
-        this.makeBet(i, this.minBet);
-      }
+    //has cash
+    if (this.canBet(player, this.anteAmount)) {
+      this.updateFeed(`${this.names[player]} antes in.`);
+      this.makeBet(player, this.anteAmount);
       return;
     }
-    this.makeBet(player, this.minBet);
   }
 
-  public allIn(player: Number) {
+  public allIn(player: number) {
     let cash = [...this.heldCash];
-    this.pot = +this.pot + +cash[+player];
+    this.updateFeed(`${this.names[player]} goes all in for $${cash[player]}!`);
+    this.pot = +this.pot + +cash[player];
     cash[+player] = 0;
     this.stateFunctions.setHeldCash([...cash]);
     this.heldCash = [...cash];
@@ -273,8 +304,8 @@ class Poker {
    * @param player The player making a bet
    */
   public async call(player: Number) {
-    if (this.canBet(+player))
-      this.makeBet(+player, this.getCurrentBet(+player));
+    if (this.canBet(+player)) this.updateFeed(`${this.names[+player]} calls.`);
+    this.makeBet(+player, this.getCurrentBet(+player));
   }
 
   /**
@@ -305,8 +336,8 @@ class Poker {
     let hands = [];
     //set up players
     for (let i = 0; i < this.numOfPlayers; i++) {
-      //Can ante? if can't they are out of the game
-      if (this.canBet(i, this.minBet)) {
+      //Has enough to ante
+      if (this.canBet(i, this.anteAmount)) {
         this.ante(i);
         let hand = [];
         //Draw 5 cards
@@ -314,9 +345,9 @@ class Poker {
           await this.draw().then((card) => {
             hand.push(card);
           });
-          console.log(hand[j].toString());
         }
         hands.push(hand);
+        //Has Money given last chance
       } else {
         //Empty hand
         hands.push([]);
@@ -345,6 +376,16 @@ class Poker {
       }
       //Human Player
       else {
+        //add to feed
+        this.updateFeed(
+          `${this.names[this.getPlayerTurn()]} ${
+            bet === 0
+              ? "checks"
+              : bet === this.anteAmount
+              ? "calls"
+              : `bets ${bet}`
+          }.`
+        );
         //Make player bet
         await this.makeBet(0, bet);
       }
@@ -364,7 +405,9 @@ class Poker {
       //Update later use badPokerCards for testing
       if (this.getPlayerTurn()) {
         await BadPokerCards().then((pos) =>
-          this.discardAndDraw(this.getPlayerTurn(), pos)
+          this.heldCards[this.getPlayerTurn()].length
+            ? this.discardAndDraw(this.getPlayerTurn(), pos)
+            : {}
         );
       }
       //Human
@@ -668,6 +711,7 @@ class Poker {
    */
   private getHandResultString(playerName: String, hand: Array<Card>) {
     let result = this.getHandString(hand) + "\n" + playerName + " has ";
+    if (hand.length === 0) return null;
     const append = (s: string) => {
       result = result + s;
       return result;
@@ -709,23 +753,26 @@ class Poker {
       let hand = this.heldCards[i];
       //Player folded or is out
       if (hand.length === 0) {
-        append("Player " + i + " is out!");
+        append("Player " + i + " is out!\n");
       } else {
-        append(this.getHandResultString("Player " + i, hand) + "\n\n");
+        append(this.getHandResultString(this.names[i], hand) + "\n\n");
       }
     }
     const winners = this.getWinners();
     //a single winner
     if (winners.length === 1) {
-      return append(
-        "the winner is Player " + winners[0] + "\nThey win $" + this.pot
-      );
+      let str = `The winner is ${this.names[winners[0]]}.\nThey win $${
+        this.pot
+      }`;
+      this.updateFeed(str);
+      return append(str);
     }
-    append("A tie between:\n");
+    let str = "A tie between:\n";
     winners.forEach((player) => {
-      append("Player " + player + " \n");
+      str = str + `${this.names[player]}\n`;
     });
-    return append("they will split $" + this.pot);
+    str = str + "they will split $" + this.pot;
+    return append(str);
   }
 
   /**
@@ -782,11 +829,11 @@ class Poker {
     //start in win state
     let state = 1;
     //lose
-    if (this.heldCash[0] <= 0) return -1;
+    if (this.heldCash[0] <= this.anteAmount) return -1;
     //Game not over
     for (let i = 1; i < this.numOfPlayers; i++) {
       //if computer player can still ante in then game not over
-      if (this.heldCash[i] >= this.minBet) state = 0;
+      if (this.heldCash[i] >= this.anteAmount) state = 0;
     }
     //Return 1 for win 0 for continue
     return state;

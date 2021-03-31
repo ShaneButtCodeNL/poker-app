@@ -31,6 +31,18 @@ export default function PlayerBet(props: any) {
           : `$${props.callBet} TO CALL`}
       </button>
       <br />
+      <button
+        id="checkBtn"
+        style={{
+          minWidth: "60%",
+          marginBottom: ".4em",
+        }}
+        onClick={() => props.bet(0)}
+        disabled={props.callBet > 0}
+      >
+        Check
+      </button>
+      <br />
       <div className="centerFlexAlign">
         <input
           type="number"

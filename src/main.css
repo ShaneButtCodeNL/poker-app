@@ -39,7 +39,7 @@
 
 body {
   margin: 0 0 0 0;
-  padding: 00 0 0 0;
+  padding: 0 0 0 0;
   font-family: "Press Start 2P", Arial, Helvetica, sans-serif;
   font-size: 1em;
   line-height: 1.5em;
@@ -414,9 +414,6 @@ header {
   line-height: 1.1em;
 }
 
-.hand {
-}
-
 .handZone {
   min-width: 10vw;
 }
@@ -495,4 +492,21 @@ header {
 
 .lightBlock {
   background-color: rgba(10, 10, 10, 0.1);
+}
+
+.presetBtn {
+  width: 40%;
+}
+
+#gameFeed {
+  line-height: 1rem;
+  height: 4.5rem;
+  border-style: double;
+  overflow: auto;
+  padding: 0.5rem 0rem 0.5rem 1rem;
+  list-style: square;
+}
+
+.feedItem {
+  font-size: 0.8rem;
 }

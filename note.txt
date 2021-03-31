@@ -3,25 +3,28 @@ todos:
 [X] polish start button
 [X] add fonts
 [X] update index.html
+[] add poker hand guide
 [] Add message for game result screen
 [] polish message for round results
 [] add animations to discard
 [] add animations to draw
 [] add animations to shuffle
-[] fix apaceing of 3p and 4p cards
+[] fix spaceing of 3p and 4p cards
 [X] fix designs so card backs are separate from face designs
 [] find way to dynamicly count designs
 [] add more card designs
 [] add ability to add custom designs
-[] implement allIn bet
-[] implement check
+[X] implement allIn bet
+[X] implement check
 [X] fix button designs
 [X] polish slide div for card designs
 [] improve light and dark mode colors
-[] add ability for player to use a custom name
-[] add custom names for cpu's
+[X] add ability for player to use a custom name
+[X] add custom names for cpu's
 [] add better ai for cpu
-[] add some preset game types like high risk
+[X] add some preset game types like high risk
+[X] add game feed saying what has happened
+[] improve ui for discarding
 
 known bugs:
 [X] when player 1 has more money than a cpu player at start of round bets enough for so cpu has to bet all money in first betting round second betting round doesn't end
@@ -35,3 +38,5 @@ known bugs:
 [X] if raise is less than needed bet loops
     //Player is given notice of how much they need to bet
 [X] if player has 0 money before 2nd betting round game is in inf loop
+[X] if player has no money they can't discard
+[X] check straigt crashes some times when a player is out

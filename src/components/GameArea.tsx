@@ -8,6 +8,7 @@ import PlayerInfo from "./PlayerInfo";
 import Poker from "../functions/Poker";
 import PlayerBet from "./PlayerBet";
 import GameResult from "./GameResult";
+import { getName, getNames } from "../functions/NameGenerator";
 
 function GameArea(props: any) {
   ////////////////////////    States    ///////////////////////////////
@@ -35,23 +36,26 @@ function GameArea(props: any) {
   const [canStart, setCanStart] = useState(true);
   //The game state 1:win 0:continue -1:lose
   const [gameState, setGameState] = useState(0);
+  //Player names
+  const [names, setNames] = useState([
+    props.name === "" ? "The One" : props.name,
+    ...getNames(props.numOfPlayers - 1),
+  ]);
+  //Game Feed
+  const [gameFeed, setGameFeed] = useState([]);
+  const updateFeed = (newFeed: string) => {
+    console.log("gameFeed", gameFeed);
+    setGameFeed([newFeed, ...gameFeed]);
+  };
   //The game
   const [pokerGame, setPokerGame] = useState(() => {
-    return new Poker(props.minBet, props.startMoney, props.numOfPlayers, {
-      setRound: setRound,
-      setPlayerTurn: setPlayerTurn,
-      setPot: setPot,
-      setHoldList: setHoldList,
-      setHeldCards: setHeldCards,
-      setHeldCash: setHeldCash,
-      setDeck: setDeck,
-      setDiscardPile: setDiscardPile,
-    });
-  });
-
-  const restartGame = () => {
-    setPokerGame(
-      new Poker(props.minBet, props.startMoney, props.numOfPlayers, {
+    return new Poker(
+      props.minBet,
+      props.startMoney,
+      props.numOfPlayers,
+      names,
+      gameFeed,
+      {
         setRound: setRound,
         setPlayerTurn: setPlayerTurn,
         setPot: setPot,
@@ -60,7 +64,35 @@ function GameArea(props: any) {
         setHeldCash: setHeldCash,
         setDeck: setDeck,
         setDiscardPile: setDiscardPile,
-      })
+        setGameFeed: setGameFeed,
+      }
+    );
+  });
+
+  const restartGame = () => {
+    console.log("REstarting game");
+    updateFeed("New Game.");
+    setGameFeed([]);
+    console.log(gameFeed);
+    setPokerGame(
+      new Poker(
+        props.minBet,
+        props.startMoney,
+        props.numOfPlayers,
+        names,
+        gameFeed,
+        {
+          setRound: setRound,
+          setPlayerTurn: setPlayerTurn,
+          setPot: setPot,
+          setHoldList: setHoldList,
+          setHeldCards: setHeldCards,
+          setHeldCash: setHeldCash,
+          setDeck: setDeck,
+          setDiscardPile: setDiscardPile,
+          setGameFeed: setGameFeed,
+        }
+      )
     );
     setRound(0);
     setGameState(0);
@@ -169,7 +201,13 @@ function GameArea(props: any) {
 
   const renderPlayerInfo = (player: Number) => {
     if (props.numOfPlayers >= +player) {
-      return <PlayerInfo player={+player} heldCash={heldCash[+player - 1]} />;
+      return (
+        <PlayerInfo
+          player={+player}
+          name={names[+player - 1]}
+          heldCash={heldCash[+player - 1]}
+        />
+      );
     }
   };
 
@@ -225,6 +263,8 @@ function GameArea(props: any) {
               canStart={canStart}
               deal={deal}
               setCanStart={setCanStart}
+              gameFeed={gameFeed}
+              updateFeed={updateFeed}
             />
           </div>
           <div id="centerPlayAreaBottom">

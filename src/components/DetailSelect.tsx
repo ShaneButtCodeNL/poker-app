@@ -1,7 +1,7 @@
 /**
  * This component will take details for the game such as number of players, starting cash and min bet
  */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Block from "./Block";
 
@@ -16,6 +16,7 @@ function DetailSelect(props: any) {
   let startMoneyRef: any = React.createRef();
   let numberOfPlayersRef: any = React.createRef();
   let minBetRef: any = React.createRef();
+  let nameRef = useRef(null);
   const [canStart, setCanStart] = useState(getErrorMessage() === null);
   const [errorState, setErrorState] = useState(getErrorMessage());
 
@@ -51,8 +52,6 @@ function DetailSelect(props: any) {
               props.setStartMoney(+startMoneyRef.current.value);
             }}
             type="number"
-            max="1000000"
-            min="5000"
             defaultValue={+props.startMoney}
           ></input>
         </div>
@@ -65,11 +64,76 @@ function DetailSelect(props: any) {
               props.setMinBet(+minBetRef.current.value);
             }}
             type="number"
-            min="100"
-            max="100000"
             defaultValue={+props.minBet}
           ></input>
         </div>
+        <div className="detailInput">
+          <label htmlFor="name">Enter Name</label>
+          <input
+            id="nameInput"
+            ref={nameRef}
+            type="text"
+            defaultValue="The One"
+            onChange={() => props.setName(nameRef.current.value)}
+          ></input>
+        </div>
+        <label htmlFor="presets">
+          <span style={{ paddingLeft: ".3em" }}>Presets:</span>
+          <br />
+          <div
+            id="presetsDiv"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-evenly",
+            }}
+          >
+            <button
+              className="presetBtn"
+              onClick={() => {
+                startMoneyRef.current.value = 10_000_000;
+                minBetRef.current.value = 2_500_000;
+                props.setStartMoney(10000000);
+                props.setMinBet(2500000);
+              }}
+            >
+              High Stakes
+            </button>
+            <button
+              className="presetBtn"
+              onClick={() => {
+                startMoneyRef.current.value = 1_000;
+                minBetRef.current.value = 100;
+                props.setStartMoney(1000);
+                props.setMinBet(100);
+              }}
+            >
+              Low Stakes
+            </button>
+            <button
+              className="presetBtn"
+              onClick={() => {
+                startMoneyRef.current.value = 10_000;
+                minBetRef.current.value = 5;
+                props.setStartMoney(10000);
+                props.setMinBet(5);
+              }}
+            >
+              Maybe try the slots
+            </button>
+            <button
+              className="presetBtn"
+              onClick={() => {
+                startMoneyRef.current.value = 1_000_000;
+                minBetRef.current.value = 1_000_000;
+                props.setStartMoney(1000000);
+                props.setMinBet(1000000);
+              }}
+            >
+              ALL OR NOTHING
+            </button>
+          </div>
+        </label>
       </div>
       <br />
       {canStart ? (

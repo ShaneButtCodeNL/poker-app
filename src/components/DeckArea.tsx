@@ -1,4 +1,5 @@
 import DisplayCard from "./DisplayCard";
+import GameFeed from "./GameFeed";
 import { Card } from "../functions/Deck";
 
 export default function DeckArea(props: any) {
@@ -62,7 +63,9 @@ export default function DeckArea(props: any) {
             <br />${props.pot}
           </div>
         )}
+        <GameFeed gameFeed={props.gameFeed} />
       </div>
+
       <div id="discardPile" className="deckPosition">
         {renderDiscard(1, props.mode, card, props.backDesign)}
       </div>
