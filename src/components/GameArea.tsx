@@ -139,12 +139,12 @@ function GameArea(props: any) {
     if (canDiscard) {
       if (player) return;
       return (
-        <div
-          className={"continueButton cardButton btn"}
+        <button
+          className={`btn ${props.mode ? "light" : "dark"}Btn`}
           onClick={() => discardClickEvent()}
         >
-          Discard
-        </div>
+          CONTINUE
+        </button>
       );
     }
   };
@@ -194,6 +194,7 @@ function GameArea(props: any) {
           }}
           callBet={pokerGame.getCurrentBet(0)}
           playerMoney={heldCash[0]}
+          mode={props.mode}
         />
       );
     }
@@ -268,9 +269,9 @@ function GameArea(props: any) {
             />
           </div>
           <div id="centerPlayAreaBottom">
-            {renderBettingWindow()}
             {renderPlayerInfo(1)}
             {renderHand(1)}
+            {renderBettingWindow()}
           </div>
         </div>
         <div id="rightPlayArea">

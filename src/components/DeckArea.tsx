@@ -1,62 +1,21 @@
-import DisplayCard from "./DisplayCard";
 import GameFeed from "./GameFeed";
-import { Card } from "../functions/Deck";
 
 export default function DeckArea(props: any) {
-  const card = new Card(1, 1);
-  const renderDeckImage = (
-    player: number,
-    mode: number,
-    card: Card,
-    backDesign: number
-  ) => {
-    return (
-      <DisplayCard
-        player={player}
-        mode={mode}
-        card={card}
-        backDesign={backDesign}
-      />
-    );
-  };
-  const renderDeck = (
-    player: number,
-    mode: number,
-    card: Card,
-    backDesign: number
-  ) => {
-    if (props.deck.size())
-      return renderDeckImage(player, mode, card, backDesign);
-    return;
-  };
-  const renderDiscard = (
-    player: number,
-    mode: number,
-    card: Card,
-    backDesign: number
-  ) => {
-    if (props.discardPile.size())
-      return renderDeckImage(player, mode, card, backDesign);
-    return;
-  };
-
   return (
     <div id="deckArea">
-      <div id="deckPile" className="deckPosition">
-        {renderDeck(1, props.mode, card, props.backDesign)}
-      </div>
-      <div>
+      <div style={{ textAlign: "center" }}>
         {props.canStart ? (
-          <div
+          <button
             id="canStartBtn"
-            className="btn cardButton"
+            className={`btn ${props.mode ? "light" : "dark"}Btn`}
             onClick={() => {
               props.deal();
               props.setCanStart(false);
             }}
+            style={{ minWidth: "60%", lineHeight: "2em" }}
           >
             Ante: ${props.ante}
-          </div>
+          </button>
         ) : (
           <div id="potInfo">
             POT:
@@ -64,10 +23,6 @@ export default function DeckArea(props: any) {
           </div>
         )}
         <GameFeed gameFeed={props.gameFeed} />
-      </div>
-
-      <div id="discardPile" className="deckPosition">
-        {renderDiscard(1, props.mode, card, props.backDesign)}
       </div>
     </div>
   );

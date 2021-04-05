@@ -3,13 +3,13 @@ todos:
 [X] polish start button
 [X] add fonts
 [X] update index.html
-[] add poker hand guide
+[X] add poker hand guide
 [] Add message for game result screen
 [] polish message for round results
 [] add animations to discard
 [] add animations to draw
 [] add animations to shuffle
-[] fix spaceing of 3p and 4p cards
+[X] fix spaceing of 3p and 4p cards
 [X] fix designs so card backs are separate from face designs
 [] find way to dynamicly count designs
 [] add more card designs
@@ -24,7 +24,8 @@ todos:
 [] add better ai for cpu
 [X] add some preset game types like high risk
 [X] add game feed saying what has happened
-[] improve ui for discarding
+[] add accessablity
+[X] improve ui for discarding
 
 known bugs:
 [X] when player 1 has more money than a cpu player at start of round bets enough for so cpu has to bet all money in first betting round second betting round doesn't end

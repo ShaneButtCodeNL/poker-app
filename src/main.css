@@ -2,6 +2,7 @@
   --dark-background: rgb(41, 41, 41);
   --light-background: rgb(209, 209, 209);
   --dark-background-transparent: rgba(30, 30, 30, 0.9);
+  --dark-light-background-transparent: rgba(70, 70, 70, 0.95);
   --light-background-transparent: rgba(219, 219, 219, 0.9);
   --dark-background-font-color: rgb(182, 182, 182);
   --light-background-font-color: rgb(0, 0, 0);
@@ -16,16 +17,8 @@
   --dark-link-bg-hover: rgb(102, 15, 0);
   --dark-link-color: rgb(216, 176, 0);
   --dark-card-bg-color: rgb(83, 83, 83);
-  --dark-card-font-color-black: rgb(0, 0, 0);
-  --dark-card-font-color-red: rgb(146, 0, 0);
-  --dark-card-back-stripe-two: rgb(109, 23, 23);
-  --dark-card-back-stripe-one: rgb(60, 36, 126);
   --dark-card-border: rgb(0, 0, 0);
   --light-card-bg-color: rgb(255, 255, 255);
-  --light-card-font-color-black: rgb(0, 0, 0);
-  --light-card-font-color-red: rgb(255, 0, 0);
-  --light-card-back-stripe-one: rgb(255, 0, 0);
-  --light-card-back-stripe-two: rgb(124, 78, 252);
   --light-card-border: rgb(0, 0, 0);
   --card-height: 15vh;
   --card-width: 4vw;
@@ -52,32 +45,8 @@ button {
 
 #title {
   font-family: "Lobster", cursive;
-  font-size: 3em;
-  line-height: 1.5em;
-}
-
-.rotate90 {
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
-
-.rotate180 {
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
-}
-
-.rotate270 {
-  -webkit-transform: rotate(270deg);
-  -moz-transform: rotate(270deg);
-  -ms-transform: rotate(270deg);
-  -o-transform: rotate(270deg);
-  transform: rotate(270deg);
+  font-size: 3rem;
+  line-height: 3rem;
 }
 
 .maxHeight {
@@ -111,8 +80,9 @@ button {
 header {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  align-items: baseline;
+  justify-content: center;
+  align-items: center;
+  margin: 0.5rem;
 }
 
 .App {
@@ -120,12 +90,8 @@ header {
   flex-direction: column;
   align-items: center;
   width: 100vw;
-  min-height: 100vh;
-  height: 100%;
-}
-
-#title {
-  margin: 0.4em;
+  height: 100vh;
+  overflow: auto;
 }
 
 .lightMode {
@@ -139,15 +105,26 @@ header {
 }
 
 .modeSelectorDiv {
-  border-style: outset;
-  border-radius: 40%;
-  padding: 0.2em;
+  border-style: groove;
+  border-radius: 0.9em;
+  padding: 0.4em;
   text-align: center;
   line-height: 1.5em;
 }
 
 .btn:hover {
   cursor: pointer;
+}
+
+.darkBtn {
+  background-color: var(--dark-background);
+  color: var(--dark-background-font-color);
+}
+
+.lightBtn {
+  background-color: var(--light-background);
+  border-color: var(--light-background-font-color);
+  color: var(--light-background-font-color);
 }
 
 .lightModeBtn {
@@ -223,14 +200,15 @@ header {
 }
 
 #playAreaContainer {
-  width: 80vw;
+  width: 100%;
   min-height: 50vh;
+  overflow: auto;
 }
 
 #playArea {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
   min-height: inherit;
 }
 
@@ -238,15 +216,16 @@ header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  min-width: 30%;
+  flex: 1 1;
+  justify-content: flex-end;
 }
 
 #rightPlayArea {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-
-  min-width: 30%;
+  flex: 1 1;
+  justify-content: flex-end;
 }
 
 #centerPlayAreaTop {
@@ -265,8 +244,7 @@ header {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  flex-basis: auto;
-  min-width: 30%;
+  flex: 1 1;
 }
 
 .verticalHand {
@@ -276,7 +254,6 @@ header {
 
 .horazontalHand {
   display: flex;
-  flex-direction: row;
   flex-wrap: nowrap;
 }
 
@@ -286,19 +263,8 @@ header {
   align-items: center;
 }
 
-.cardButton {
-  border: solid;
-  text-align: center;
-  padding: 0.5em;
-}
-
 .holdBtn {
   border-radius: 2em;
-}
-
-#canStartBtn {
-  border-radius: 1.5em;
-  border-style: outset;
 }
 
 .keepBtn {
@@ -308,12 +274,6 @@ header {
 .notKeepBtn {
   font-size: 0.65em;
   padding: 0.75em;
-}
-
-.continueButton {
-  margin: 1em;
-  border-radius: 1.5em;
-  border-style: outset;
 }
 
 .cardDark {
@@ -392,7 +352,7 @@ header {
 
 #deckArea {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   margin: 0.2em;
 }
@@ -410,8 +370,12 @@ header {
   border-width: 1px;
   border-color: black;
   padding: 0.5em;
-  margin: 0.2em;
+  margin: 0.6em;
   line-height: 1.1em;
+}
+
+.playerBetContainer {
+  flex: 1;
 }
 
 .handZone {
@@ -426,13 +390,12 @@ header {
   line-height: var(--image-preview-lineheight);
 }
 
-.cardImage {
-  max-height: 100%;
-  max-width: 100%;
+.cardImageVerticle {
+  max-height: 15vh;
+  margin: 0 auto 0 auto;
 }
-.cardContainer {
-  max-height: 8vw;
-  max-width: 5vw;
+.cardImageHorazontal {
+  max-width: 15vh;
 }
 
 #gameResultDiv {
@@ -452,6 +415,10 @@ header {
 
 .darkTransBG {
   background-color: var(--dark-background-transparent);
+}
+
+.darkLightTransBG {
+  background-color: var(--dark-light-background-transparent);
 }
 
 #designSelectContainer {
@@ -500,13 +467,27 @@ header {
 
 #gameFeed {
   line-height: 1rem;
-  height: 4.5rem;
+  height: 5rem;
   border-style: double;
   overflow: auto;
   padding: 0.5rem 0rem 0.5rem 1rem;
   list-style: square;
+  text-align: left;
 }
 
 .feedItem {
   font-size: 0.8rem;
+  margin: 0.1em 0;
+}
+
+.cardFieldset {
+  padding: 0;
+  margin: 0.1em;
+  border-width: 0.1em;
+  cursor: pointer;
+  text-align: center;
+}
+
+.cardLegend {
+  margin: auto;
 }

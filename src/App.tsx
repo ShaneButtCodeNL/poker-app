@@ -8,6 +8,8 @@ import GameArea from "./components/GameArea";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { useState } from "react";
 import DesignSelect from "./components/DesignSelect";
+import { useSpring, animated, config } from "react-spring";
+import pokerHands from "./images/pokerHands.png";
 
 function App() {
   ///////////          States            //////////////////////
@@ -32,11 +34,55 @@ function App() {
   //
   //Player's name
   const [name, setName] = useState("");
+  //
+  //Show poker guide
+  const [showPokerGuide, setShowPokerGuide] = useState(false);
+
+  const slide = useSpring({
+    config: config.default,
+    from: { opacity: 0, width: "0%", height: "0%", overflow: "hidden" },
+    to: {
+      opacity: showPokerGuide ? 1 : 0,
+      width: showPokerGuide ? "100vw" : "0%",
+      height: showPokerGuide ? "100vh" : "0%",
+      overflow: "none",
+    },
+  });
 
   let appClass = "App " + (mode ? "lightMode" : "darkMode");
   return (
     <div className={appClass}>
-      <Header mode={mode} setMode={setMode} />
+      <animated.div
+        className={`${mode ? "light" : "darkLight"}TransBG`}
+        style={{
+          ...slide,
+          position: "absolute",
+          left: 0,
+          top: 0,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        onClick={() => {
+          setShowPokerGuide(false);
+        }}
+      >
+        <img
+          style={{
+            maxHeight: "100vh",
+            maxWidth: "100vw",
+            padding: 0,
+            margin: 0,
+          }}
+          src={pokerHands}
+          alt="poker hand guide"
+        />
+      </animated.div>
+      <Header
+        mode={mode}
+        setMode={setMode}
+        setShowPokerGuide={setShowPokerGuide}
+      />
       <DesignSelect
         frontDesign={frontDesign}
         setFrontDesign={setFrontDesign}

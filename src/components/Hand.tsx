@@ -20,14 +20,15 @@ export default function Hand(props: any) {
   };
 
   return (
-    <div id={player()} className="vFlex centerFlexAlign maxHeight hand">
+    <div
+      id={player()}
+      style={{}}
+      className={`vFlex centerFlexAlign hand ${
+        props.player <= 1 ? "horazontalHand" : "verticalHand"
+      }`}
+    >
       {props.renderDiscardButton(props.player)}
-      <div
-        className={
-          "handZone maxHeight " +
-          (props.player <= 1 ? "horazontalHand" : "verticalHand")
-        }
-      >
+      <div className={props.player < 2 ? "horazontalHand" : "verticleHand"}>
         {props.hand.map((card, cardPos) => {
           return (
             <Card

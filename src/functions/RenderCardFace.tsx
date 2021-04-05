@@ -11,9 +11,11 @@ const renderFace = (card: Card, design: Number) => {
 };
 
 //Will render the back of a card
-const renderBack = (design: Number) => {
+const renderBack = (design: Number, rotation?: number) => {
   if (!design) return null;
-  return `${cardFolder}/back/Back${design}${fileEnd}`;
+  return `${cardFolder}/back/Back${design}${
+    rotation ? `rotate${rotation}` : ""
+  }${fileEnd}`;
 };
 
 export { renderFace, renderBack };

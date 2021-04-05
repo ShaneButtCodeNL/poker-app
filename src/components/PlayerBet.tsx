@@ -17,6 +17,7 @@ export default function PlayerBet(props: any) {
       <span>Bet</span>
       <br />
       <button
+        className={`${props.mode ? "light" : "dark"}Btn btn`}
         style={{ minWidth: "60%", marginBottom: ".4em" }}
         onClick={() => {
           props.bet(
@@ -31,18 +32,6 @@ export default function PlayerBet(props: any) {
           : `$${props.callBet} TO CALL`}
       </button>
       <br />
-      <button
-        id="checkBtn"
-        style={{
-          minWidth: "60%",
-          marginBottom: ".4em",
-        }}
-        onClick={() => props.bet(0)}
-        disabled={props.callBet > 0}
-      >
-        Check
-      </button>
-      <br />
       <div className="centerFlexAlign">
         <input
           type="number"
@@ -51,6 +40,7 @@ export default function PlayerBet(props: any) {
           disabled={props.playerMoney <= props.callBet}
         ></input>
         <button
+          className={`${props.mode ? "light" : "dark"}Btn btn`}
           disabled={props.playerMoney <= props.callBet}
           style={{ whiteSpace: "pre-wrap", marginLeft: ".5em" }}
           onClick={() => {
